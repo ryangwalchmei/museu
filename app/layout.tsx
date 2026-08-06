@@ -1,17 +1,17 @@
-import type { Metadata } from 'next'
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Trainerfit 2.0',
-}
+  title: "Trainerfit 2.0",
+};
 
 export default function RootLayout({
-  children
+  children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="pt-bt">
       <body>{children}</body>
     </html>
-  )
+  );
 }
