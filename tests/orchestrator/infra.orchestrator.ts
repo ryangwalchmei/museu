@@ -1,4 +1,5 @@
 import retry from "async-retry";
+import migrator from "models/migrator";
 
 async function waitForAllServices() {
   await waitForWebServer();
@@ -19,8 +20,13 @@ async function waitForAllServices() {
   }
 }
 
+async function runPendingMigrations() {
+  await migrator.runPendingMigrations();
+}
+
 const orchestrator = {
   waitForAllServices,
+  runPendingMigrations,
 };
 
 export default orchestrator;
