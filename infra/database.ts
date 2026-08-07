@@ -1,4 +1,5 @@
 import { Client, QueryConfig, QueryResult, QueryResultRow } from "pg";
+import { ServiceError } from "./errors";
 
 async function query<T extends QueryResultRow>(
   query: string | QueryConfig,
@@ -7,6 +8,11 @@ async function query<T extends QueryResultRow>(
 
   try {
     return await client.query<T>(query);
+  } catch (error) {
+    throw new ServiceError({
+      message: "Erro na conexão com Banco ou na Query.",
+      cause: error,
+    });
   } finally {
     await client.end();
   }
