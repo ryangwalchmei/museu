@@ -1,11 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import database from "infra/database";
 import { createRouter } from "next-connect";
+import controller from "infra/controller";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 router.get(getHandler);
 
-export default router.handler();
+export default router.handler(controller.errorHandlers);
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   const updatedAt = new Date().toISOString();
