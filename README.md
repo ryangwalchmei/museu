@@ -388,3 +388,163 @@ Caso não esteja instalado, basta executar:
 
 </p>
 </details> 
+
+<details><summary>macOS</summary>
+<p>
+
+### 1. Introdução
+Para configurar o ambiente de desenvolvimento no macOS, precisamos ter instaladas as duas ferramentas principais para rodar o nosso projeto, que são o Node.js e o Docker. Neste tutorial nós iremos detalhar como fazer isso, além de sugerir algumas outras ferramentas adicionais para otimizar o trabalho.
+
+### 2. Docker no macOS
+O Docker é um recurso que nos permite executar programas em ambientes isolados e padronizados, conhecidos como contêineres, com a garantia de que esses programas funcionarão da exata mesma maneira em qualquer máquina, independentemente da configuração de hardware ou software desta.
+
+No entanto, como o Docker foi projetado originalmente para Linux (é onde estão os recursos nativos dos quais ele depende), para que ele possa funcionar no macOS é preciso que exista por baixo dele uma camada adicional que simule o seu ambiente original. Essa camada é fornecida por uma máquina virtual que permite executar, dentro do sistema operacional, um computador virtual com seus próprios recursos de hardware e sistema operacional.
+
+Para a nossa comodidade, o Docker Desktop, que é a solução oficial de instalação do Docker no macOS, já traz a configuração automática de uma máquina virtual Linux leve e integrada ao sistema.
+
+#### 2.1 Instalando o Docker Desktop
+Segundo a documentação oficial, os requisitos para a instalação do Docker Desktop são apenas dois:
+
+- Ter uma versão atualizada do macOS: eles garantem suporte sempre às três últimas versões major do sistema.
+- Pelo menos 4 GB de RAM disponíveis.
+
+E para baixar basta acessar o [site oficial](https://www.docker.com/), que o botão de download deve aparecer na home do site. Ao passar o mouse sobre ele, você deve clicar na opção referente ao chip usado no seu Mac (Apple Silicon ou Intel Chip):
+
+<img width="2232" height="1688" alt="Image" src="https://github.com/user-attachments/assets/4b54a44c-ce18-45e9-9fd2-05b8b03de9bb" />
+
+Com o download finalizado você pode abrir o pacote baixado dando dois cliques nele, e então na janela de confirmação da instalação você deve clicar e arrastar o ícone do Docker para cima da pasta Applications e soltá-lo lá.
+
+<img width="1438" height="676" alt="Image" src="https://github.com/user-attachments/assets/b20f03d7-4276-4a5c-8e78-2a9a9a8898cf" />
+
+Com a transferência finalizada, você pode abrir o Docker Desktop a partir do menu de aplicativos (Launchpad) ou do Spotlight (atalho Cmd+Espaço), pesquisando por "Docker". Nessa primeira abertura, o sistema vai pedir a sua confirmação, e você pode clicar em "Open".
+
+Ao iniciar a aplicação pela primeira vez, caso você seja solicitado a atualizar o Docker para instalar o Rosetta (software necessário para rodar algumas ferramentas feitas para chips Intel), você pode ignorar isso por enquanto.
+
+Após aceitar os termos de uso, na janela seguinte você pode deixar selecionada a opção das configurações recomendadas e clicar em "Finish":
+
+<img width="1878" height="1224" alt="Image" src="https://github.com/user-attachments/assets/2c4cd0af-83ea-4862-9888-8bcf9cfb590d" />
+
+Caso o Docker peça para você informar um email ou criar um cadastro, você também pode ignorar isso, clicando em "Skip".
+
+Com tudo pronto, você deve ver uma tela como a que está abaixo:
+
+<img width="2438" height="1516" alt="Image" src="https://github.com/user-attachments/assets/f194ae08-f3a3-4845-bdef-cc76cbc065a3" />
+
+### 3. Preparando o caminho para o Node.js com o NVM
+Com o Docker pronto para uso, vamos partir agora para a instalação do Node Version Manager (NVM), que é a ferramenta que nos ajudará a instalar e gerenciar diferentes versões do Node.js.
+
+Vamos instalar ele a partir da linha de comando, no aplicativo Terminal, que você pode abrir indo no menu de aplicativos (Launchpad) ou no Spotlight (atalho Cmd+Espaço), pesquisando por "Terminal".
+
+O processo é simples e consiste basicamente na execução de um único comando.
+
+##### Passo 1: Baixar e executar o script oficial
+Execute o comando abaixo, disponível no [repositório oficial do NVM](https://github.com/nvm-sh/nvm), para fazer o download e execução do script de instalação.
+
+`curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash`
+
+<img width="1394" height="966" alt="Image" src="https://github.com/user-attachments/assets/96bf478e-a6d8-4189-962f-9781aecab7be" />
+
+##### Passo 2: Verificar a instalação
+Feche e abra o Terminal novamente, e execute o comando `nvm -v` a fim de verificar se a instalação foi feita com sucesso. A execução deve retornar a versão `0.40.4`.
+
+<img width="1394" height="966" alt="Image" src="https://github.com/user-attachments/assets/0c43d91f-ae72-462f-bb92-5eaec9f97a0c" />
+
+### 4. Instalando o editor de código
+Como editor de código, nós recomendamos a utilização do VS Code. Mas caso você tenha algum outro que seja da sua preferência, sinta-se à vontade para usá-lo.
+
+Para fazer o download do VS Code, basta acessar o [site oficial](https://code.visualstudio.com/) e clicar no botão Download for macOS. Com o download finalizado, basta seguir o mesmo passo de copiar o aplicativo para a pasta Applications, como foi feito para o Docker Desktop.
+
+<img width="2232" height="1688" alt="Image" src="https://github.com/user-attachments/assets/99958adf-6279-461a-98cd-3b062aa49b72" />
+
+Feito isso, vamos ativar o comando code no Terminal, que vai facilitar algumas operações com o Git, além de nos permitir abrir a pasta do nosso projeto no VS Code diretamente do Terminal usando o comando code <nome-da-pasta> (Obs: vamos ensinar na próxima seção como você pode clonar o repositório do seu projeto usando a linha de comando no Terminal).
+
+Para usar o VS Code pelo Terminal no macOS, você precisa abrir o VS Code, depois pressionar `Cmd+Shift+P`, digitar "shell command" e clicar em `Shell Command: Install 'code' command in PATH`.
+
+<img width="2344" height="1572" alt="Image" src="https://github.com/user-attachments/assets/9f7c88fd-aac8-4751-a9de-3b100161fa20" />
+
+### 5. Configurando o Git e GitHub
+Algumas versões do macOS já vêm com uma instalação do Git, que você pode verificar executando o comando `git -v`. Caso ele não esteja presente, ao executar esse comando o Mac vai oferecer instalar o pacote de ferramentas de desenvolvimento da Apple, que inclui o Git. Nesse caso, você pode confirmar quando ele solicitar.
+
+Com o Git instalado, para que o nosso ambiente fique 100% preparado para realizar os commits, é preciso configurar o usuário do Git localmente e cadastrar as credenciais na nossa conta do GitHub para que possamos enviar as modificações facilmente para o repositório remoto.
+
+#### 5.1 Identificando usuário local do Git
+No Git, os commits precisam ser identificados com um nome e um endereço de email. Nós precisamos fazer essa configuração apenas uma vez, e é um processo simples. Basta executar os seguintes comandos:
+
+```
+git config --global user.name "Seu Nome"
+git config --global user.email "seu_email@exemplo.com"
+```
+
+<img width="1408" height="966" alt="Image" src="https://github.com/user-attachments/assets/98689e57-216c-4b5d-a71a-af788c353ec0" />
+
+#### 5.2 Configurando o editor padrão do Git
+Algumas operações no Git requerem a abertura de um editor de texto. Vamos configurá-lo para que ele use o VS Code como o editor padrão. Para isso, basta executar o seguinte comando:
+
+`git config --global core.editor "code --wait"`
+
+#### 5.3 Se conectando com o GitHub com SSH
+O protocolo **Secure Shell (SSH)** é uma forma de nos conectarmos a um servidor remoto de modo seguro, usando criptografia. A autenticação da conexão é feita através de um par de chaves, onde uma fica armazenada na máquina do cliente e a outra no servidor. A vantagem de usar esse sistema é que não precisamos inserir o nosso login e senha sempre que quisermos nos conectar ao GitHub.
+
+Estou assumindo uma instalação zerada do macOS e, portanto, que nenhuma chave SSH esteja presente. Caso esse não seja o seu caso, verifique se você já possui uma chave seguindo [essas instruções](https://docs.github.com/pt/authentication/connecting-to-github-with-ssh/checking-for-existing-ssh-keys). Se sim, você poderá usá-la ou gerar uma nova seguindo os passos abaixo.
+
+##### Passo 1: Gerando uma nova chave SSH
+Execute o comando abaixo no Terminal, substituindo o email de exemplo pelo que você usa na sua conta do GitHub. Ele irá gerar uma nova chave SSH associada ao email passado.
+
+`ssh-keygen -t ed25519 -C "seu_email@exemplo.com"`
+
+Será retornada uma mensagem avisando que a chave está sendo gerada, e uma outra solicitando um caminho e nome para o arquivo da mesma. Basta apertar Enter para aceitar a localização padrão.
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/Users/usuario/.ssh/id_ed25519):
+```
+
+Em seguida, será solicitada uma frase secreta que serve como uma camada de proteção adicional. Você pode ignorar a criação dela apertando Enter duas vezes. Se quiser adicionar uma mais tarde, siga [essas instruções](https://docs.github.com/pt/authentication/connecting-to-github-with-ssh/working-with-ssh-key-passphrases#adding-or-changing-a-passphrase).
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+Pronto! Par de chaves gerado!
+
+##### Passo 2: Adicionando a chave ao ssh-agent
+O ssh-agent é o programa que irá gerenciar a nossa chave SSH. Com o comando abaixo nós iremos inicializá-lo e deixá-lo pronto para que o terminal possa utilizá-lo para conectar-se ao servidor do GitHub. A mensagem Agent pid XXXXX será exibida indicando que o programa foi iniciado com sucesso.
+
+`eval "$(ssh-agent -s)"`
+
+Em seguida, execute o comando abaixo para adicionar a chave ao ssh-agent (Obs.: caso a chave tenha sido criada com um nome diferente do padrão, é necessário substituir `id_ed25519` por ele):
+
+`ssh-add ~/.ssh/id_ed25519`
+
+Será retornada a mensagem `Identity added: /Users/usuario/.ssh/id_ed25519 (seu_email@exemplo.com)`.
+
+##### Passo 3: Adicionando chave SSH ao GitHub
+Primeiro, execute o comando `cat ~/.ssh/id_ed25519.pub | pbcopy` a fim de copiar o conteúdo da chave para a área de transferência.
+
+Em seguida, entre em sua conta do GitHub, clique na sua foto de perfil no canto superior direito e acesse Settings.
+
+Na seção "Access" da barra lateral esquerda, clique em `SSH and GPG keys`. Em seguida clique no botão `New SSH key` ou `Add SSH key`. Então, no campo "Title" basta adicionar um título para a sua chave (pode ser uma referência ao computador), e no campo "Key" colar o conteúdo da chave que foi copiado do terminal. No campo "Key Type" você pode deixar selecionada a opção "Authentication Key". Por fim, clique em `Add SSH key`, e confirme o seu login, caso seja solicitado.
+
+Com isso, você pode agora clonar o seu projeto para a sua máquina local usando o protocolo SSH, através do comando git clone.
+
+<img width="489" height="417" alt="Image" src="https://github.com/user-attachments/assets/ef6cd915-4802-41e6-acce-d27134e915aa" />
+
+Tomando como exemplo o endereço SSH do repositório na imagem acima, o comando a ser executado seria:
+
+`git clone git@github.com:andrei-alves/meu-projeto.git`
+
+Mas atenção: na sua primeira conexão, será exibida uma mensagem como a abaixo:
+
+```
+The authenticity of host 'github.com (IP ADDRESS)' can't be established.
+ED25519 key fingerprint is SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU.
+Are you sure you want to continue connecting (yes/no)?
+```
+
+Isso acontece porque o GitHub ainda não é um host conhecido pela sua máquina. Para garantir a autenticidade da chave retornada na mensagem, você pode comparar com a que é disponibilizada na [página oficial](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints) (compare com a do tipo Ed25519). Você pode usar [essa ferramenta](https://www.diffchecker.com/) para comparar as duas chaves, e ao copiar a que é retornada no terminal não inclua o ponto final (por exemplo, na messagem acima você copiaria SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU).
+
+Ao confirmar a autenticidade, digite `yes `no terminal e aperte `Enter`. E pronto! Agora você pode fazer os seus commits localmente e enviá-los para o seu repositório remoto com facilidade.
+
+</p>
+</details> 
