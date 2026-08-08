@@ -4,6 +4,27 @@ import { NotFoundError, ValidationError } from "infra/errors";
 
 import { CreateUserInput } from "./types";
 
+async function listAll() {
+  const allUsers = await runSelectAllQuery();
+  return allUsers;
+
+  async function runSelectAllQuery() {
+    const results = await database.query({
+      text: `
+        SELECT
+          *
+        FROM
+          users
+        ORDER BY
+          username ASC
+        ;`,
+      values: [],
+    });
+
+    return results.rows;
+  }
+}
+
 async function findOneByUsername(username: CreateUserInput["username"]) {
   const userFound = await runSelectQuery(username);
 
@@ -166,6 +187,7 @@ async function hashPasswordInObject(userInputValues: CreateUserInput) {
 const user = {
   create,
   findOneByUsername,
+  listAll,
 };
 
 export default user;

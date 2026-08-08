@@ -3,7 +3,7 @@ import user from "models/user";
 import { cpf } from "cpf-cnpj-validator";
 import { CreateUserInputNoRequired } from "models/user/types";
 
-async function createUser(userObject: CreateUserInputNoRequired) {
+async function createUser(userObject?: CreateUserInputNoRequired) {
   return await user.create({
     username:
       userObject?.username || faker.internet.username().replace(/[_.-]/g, ""),
