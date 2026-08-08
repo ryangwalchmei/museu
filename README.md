@@ -229,3 +229,162 @@ Ao confirmar a autenticidade, digite yes no terminal e aperte Enter. E pronto! A
 
 </p>
 </details> 
+
+
+<details><summary>Linux</summary>
+<p>
+
+### 1. Introdução
+Neste tutorial, vamos aprender a configurar o ambiente de desenvolvimento do nosso projeto no Ubuntu, abordando a instalação e configuração de:
+
+- Docker
+- NVM (Node Version Manager)
+- VS Code
+- Git e GitHub
+
+O tutorial também pode ser seguido em outras distribuições baseadas em Ubuntu, que podem ser conferidas [neste link](https://distrowatch.com/search.php?basedon=Ubuntu). Recomenda-se a versão 22.04 LTS ou superior.
+
+### 2. Docker no Linux e Instalação
+O Docker é um recurso que nos permite executar programas em ambientes isolados e padronizados, conhecidos como contêineres, com a garantia de que esses programas funcionarão da exata mesma maneira em qualquer máquina, independentemente das configuração de hardware ou software desta.
+
+No Linux, a instalação e o uso do Docker são mais simples do que no Windows, porque não é necessário criar nenhuma camada adicional de virtualização para que ele funcione. Isso acontece porque a “casa” do Docker é justamente o Linux; foi nesse ambiente que ele foi projetado originalmente e é nele que estão disponíveis, de forma nativa, todos os recursos dos quais depende. Isso simplifica bastante a configuração do ambiente e reduz o consumo de recursos da máquina.
+
+No Windows, o Docker precisa de uma camada extra (Hyper-V ou WSL) para simular um ambiente Linux. No Linux, essa camada já existe: o próprio kernel do sistema oferece os recursos de isolamento e gerenciamento de processos que o Docker utiliza, como namespaces e cgroups. Em outras palavras, enquanto no Windows o Docker depende de uma máquina virtual para rodar, no Linux ele roda “direto na máquina”.
+
+O Docker Desktop no Linux roda dentro de uma máquina virtual (VM), e para que essa VM funcione de forma eficiente, é necessário que o sistema tenha suporte à virtualização KVM.
+
+O KVM (Kernel-based Virtual Machine) é uma tecnologia de virtualização do Linux que permite transformar o kernel do sistema em um hipervisor. Em outras palavras, ele possibilita que você execute máquinas virtuais diretamente no Linux, aproveitando os recursos do processador, como múltiplos núcleos e instruções de virtualização, sem precisar de software adicional pesado.
+
+Para que o Docker Desktop funcione corretamente, o KVM precisa estar ativo.
+
+Na maioria das distribuições modernas, se o processador suporta virtualização, o módulo KVM já é carregado automaticamente. Muito provavelmente, você não precisará fazer nenhuma configuração adicional nesse ponto e pode seguir direto para a instalação do Docker Desktop.
+
+No entanto, se for necessário, você pode carregar e configurar o KVM manualmente seguindo os passos [deste link](https://docs.docker.com/desktop/setup/install/linux/#kvm-virtualization-support).
+
+Atenção! É importante destacar que o Docker exige, no mínimo, 4 GB de RAM para funcionar corretamente.
+
+Primeiro, vamos preparar o nosso sistema para instalar o Docker de forma segura, garantindo que os pacotes venham de uma fonte confiável. Para isso, execute os seguintes comandos no seu terminal:
+
+```
+sudo apt update
+sudo apt install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+```
+
+Agora vamos configurar o repositório oficial do Docker. Execute esses comandos:
+
+```
+sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+Components: stable
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+```
+
+Por fim, vamos atualizar a lista de pacotes e instalar o Docker pra valer:
+
+```
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+
+O serviço do Docker inicia automaticamente após a instalação. Para verificar se o Docker está em execução, use:
+
+`sudo systemctl status docker`
+
+Por padrão, o Docker precisa de permissões de administrador (sudo) para funcionar no Linux. Isso acontece porque o serviço do Docker roda como root e só usuários com esse nível de permissão conseguem acessá-lo diretamente.
+
+Para evitar ter que usar `sudo `em todos os comandos, podemos dar acesso ao Docker para o seu usuário atual.
+
+Primeiro, criamos um grupo chamado docker. Esse grupo vai concentrar os usuários que têm permissão para usar o Docker sem precisar de privilégios de administrador:
+
+`sudo groupadd docker`
+
+Em seguida, adicionamos o seu usuário a esse grupo:
+
+`sudo usermod -aG docker $USER`
+
+Esse comando inclui o seu usuário no grupo docker sem remover ele de outros grupos do sistema.
+
+Depois disso, é necessário reiniciar a sessão para que o sistema reconheça essa nova permissão. A melhor de forma de fazer isso (pelo menos, na minha experiência) é reiniciando o computador, mas você também pode tentar apenas sair e entrar novamente na sua conta.
+
+Agora vamos testar se tudo funcionou corretamente:
+
+`docker run hello-world`
+
+Esse comando baixa uma imagem de teste oficial do Docker e executa um container simples. Se tudo estiver configurado corretamente, você verá uma mensagem de sucesso no terminal.
+
+Se o comando rodar sem precisar de `sudo`, significa que seu usuário já tem permissão para usar o Docker normalmente.
+
+### 3. NVM no Ubuntu
+A instalação do NVM é bem mais simples do que a do Docker. De acordo com a [documentação oficial](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating), a forma mais prática é executar o seguinte comando:
+
+`curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash`
+
+Em seguida, é necessário fechar o terminal e abri-lo novamente para que o NVM esteja disponível.
+
+Para verificar se a instalação foi bem-sucedida, execute:
+
+`nvm --version`
+
+### 4. Instalando o editor de código
+Como editor de código, nós recomendamos a utilização do VS Code. Mas caso você tenha algum outro que seja da sua preferência, sinta-se à vontade para usá-lo.
+
+Para baixar o VS Code, acesse o [site oficial](https://code.visualstudio.com/) e clique em Download for Linux (.deb).
+
+#### 4.1 Instalando via interface gráfica
+Localize o arquivo .deb baixado, clique com o botão direito sobre ele e selecione Abrir com outro aplicativo.
+
+<img width="509" height="225" alt="Image" src="https://github.com/user-attachments/assets/915a38da-e9ba-4c8d-8ee1-eaf98ad89ea8" />
+
+Escolha a opção Instalação de Programas e, na janela que se abrir, clique em Instalar. Pode ser necessário informar sua senha de usuário. Aguarde até que a instalação seja concluída.
+
+
+<img width="504" height="255" alt="Image" src="https://github.com/user-attachments/assets/2a8b16a8-a994-4b6b-82ee-bc89a8409758" />
+
+<img width="864" height="225" alt="Image" src="https://github.com/user-attachments/assets/51f74377-43aa-48e6-95b5-d49823c8e6c0" />
+
+
+Após a instalação, o VS Code estará disponível na seção de aplicativos.
+
+<img width="350" height="225" alt="Image" src="https://github.com/user-attachments/assets/da3c10b6-7634-405f-891e-9942840da5f5" />
+
+
+#### 4.2 Instalando via linha de comando
+No terminal, localize o arquivo .deb baixado e execute o seguinte comando:
+
+```
+sudo apt update
+sudo apt install ./nome-do-arquivo.deb
+```
+
+Caso a instalação retorne erro de dependência, execute o comando:
+
+`sudo apt install -f`
+
+E pronto, o VS Code está instalado com sucesso!
+
+### 5. Configurando o Git e GitHub
+No Ubuntu, o Git vem instalado por padrão. Você pode conferir isso executando o comando:
+
+`git --version`
+
+Caso não esteja instalado, basta executar:
+
+`sudo apt install git`
+
+
+### Referências
+
+- https://docs.docker.com/desktop/setup/install/linux/
+- https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+- https://docs.docker.com/desktop/setup/install/linux/ubuntu/
+- https://github.com/nvm-sh/nvm
+
+
+</p>
+</details> 
