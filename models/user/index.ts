@@ -293,8 +293,13 @@ async function update(
         SET
           username = $2,
           email = $3,
-          password = $4,
+          password = $4::varchar,
           updated_at = timezone('utc', now()),
+          password_changed_at = CASE
+            WHEN password IS DISTINCT FROM $4::varchar
+              THEN timezone('utc', now())
+            ELSE password_changed_at
+          END,
           cpf = $5,
           phone = $6,
           address = $7,

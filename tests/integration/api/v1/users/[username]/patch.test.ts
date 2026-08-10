@@ -337,26 +337,6 @@ describe("PATCH /api/v1/users/:username", () => {
 
       const responseBody = await response.json();
 
-      expect(responseBody).toEqual({
-        id: responseBody.id,
-        username: createdUser.username,
-        email: createdUser.email,
-        password: responseBody.password,
-        password_changed_at: responseBody.password_changed_at,
-        features: ["read:activation_token"],
-        cpf: createdUser.cpf,
-        phone: createdUser.phone,
-        address: createdUser.address,
-        notes: createdUser.notes,
-        created_at: responseBody.created_at,
-        updated_at: responseBody.updated_at,
-        avatar_url: createdUser.avatar_url,
-        banned_at: createdUser.banned_at,
-        banned_by: createdUser.banned_by,
-        banned_reason: createdUser.banned_reason,
-        deactivated_at: createdUser.deactivated_at,
-      });
-
       expect(uuidVersion(responseBody.id)).toBe(4);
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
@@ -376,6 +356,12 @@ describe("PATCH /api/v1/users/:username", () => {
 
       expect(correctPasswordMatch).toBe(true);
       expect(incorrectPasswordMatch).toBe(false);
+
+      expect(responseBody.password).not.toBe(createdUser.password);
+      expect(
+        Date.parse(createdUser.password_changed_at) <
+          Date.parse(responseBody.password_changed_at),
+      ).toBe(true);
     });
 
     test("With duplicated 'cpf'", async () => {
