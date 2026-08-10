@@ -6,6 +6,7 @@ import session from "models/session";
 
 export default createRouter<NextApiRequest, NextApiResponse>()
   .post(postHandler)
+  .delete(deleteHandler)
   .handler(controller.errorHandlers);
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
@@ -21,4 +22,14 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   await controller.setSessionCookie(newSession.token, res);
 
   return res.status(201).json(newSession);
+}
+
+async function deleteHandler(req: NextApiRequest, res: NextApiResponse) {
+  const sessionToken = req.cookies.session_id;
+
+  const sessionObject = await session.findOneValidByToken(sessionToken);
+  const expiredSession = await session.expireById(sessionObject.id);
+  controller.clearSessionCookie(res);
+
+  return res.status(200).json(expiredSession);
 }
