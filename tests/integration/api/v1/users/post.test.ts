@@ -4,6 +4,7 @@ import orchestrator from "tests/orchestrator";
 import user from "models/user";
 import password from "models/password";
 import { faker } from "@faker-js/faker";
+import { cpf } from "cpf-cnpj-validator";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -163,6 +164,33 @@ describe("POST /api/v1/users", () => {
       });
     });
 
+    test("With invalid 'username'", async () => {
+      const response = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: "username inválido",
+          email: faker.internet.email(),
+          password: faker.internet.password(),
+          cpf: cpf.generate(),
+          address: faker.location.streetAddress(),
+          phone: faker.phone.number(),
+        }),
+      });
+
+      expect(response.status).toBe(400);
+      const responseBody = await response.json();
+
+      expect(responseBody).toEqual({
+        name: "ValidationError",
+        message: "O username informado é inválido.",
+        action: "Insira um username válido para realizar esta operação.",
+        status_code: 400,
+      });
+    });
+
     test("Without 'CPF'", async () => {
       const response = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",
@@ -235,6 +263,33 @@ describe("POST /api/v1/users", () => {
       });
     });
 
+    test("With invalid 'CPF'", async () => {
+      const response = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: "usernamevalid",
+          email: "emailvalid@gwalchmei.com.br",
+          password: "senha123",
+          cpf: "12345678900",
+          address: "rua tal, cidade tal, estado tal, pais tal",
+          phone: "91984546411",
+        }),
+      });
+
+      expect(response.status).toBe(400);
+      const responseBody = await response.json();
+
+      expect(responseBody).toEqual({
+        name: "ValidationError",
+        message: "O CPF informado é inválido.",
+        action: "Insira um CPF válido para realizar esta operação.",
+        status_code: 400,
+      });
+    });
+
     test("Without 'address'", async () => {
       const cpf = orchestrator.cpf.generate(false);
       const response = await fetch("http://localhost:3000/api/v1/users", {
@@ -259,33 +314,6 @@ describe("POST /api/v1/users", () => {
         name: "ValidationError",
         message: "Endereço não foi informado.",
         action: "Insira um endereço para realizar esta operação.",
-        status_code: 400,
-      });
-    });
-
-    test("Without 'phone'", async () => {
-      const cpf = orchestrator.cpf.generate(false);
-      const response = await fetch("http://localhost:3000/api/v1/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "wihoutphone",
-          email: "wihoutphone@gwalchmei.com.br",
-          password: "senha123",
-          cpf,
-          address: "rua tal, cidade tal, estado tal, pais tal",
-        }),
-      });
-
-      expect(response.status).toBe(400);
-      const responseBody = await response.json();
-
-      expect(responseBody).toEqual({
-        name: "ValidationError",
-        message: "Número telefone não foi informado ou inválido.",
-        action: "Insira um número telefone válido para realizar esta operação.",
         status_code: 400,
       });
     });

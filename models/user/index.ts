@@ -64,17 +64,26 @@ async function create(userInputValues: CreateUserInput) {
   await hashPasswordInObject(userInputValues);
   injectDefaultfeaturesInObject(userInputValues);
 
-  if (!userInputValues.cpf) {
-    throw new ValidationError({
-      message: "CPF não foi informado ou inválido.",
-      action: "Insira um CPF válido para realizar esta operação.",
-    });
+  if (userInputValues.username) {
+    const usernameRegex = /^[a-zA-Z0-9_]+$/;
+    if (!usernameRegex.test(userInputValues.username)) {
+      throw new ValidationError({
+        message: "O username informado é inválido.",
+        action: "Insira um username válido para realizar esta operação.",
+      });
+    }
   }
-  if (!userInputValues.phone) {
-    throw new ValidationError({
-      message: "Número telefone não foi informado ou inválido.",
-      action: "Insira um número telefone válido para realizar esta operação.",
-    });
+
+  if (userInputValues.cpf) {
+    await validateUniqueCpf(userInputValues.cpf);
+    const isValid = cpfValidator.isValid(userInputValues.cpf);
+
+    if (!isValid) {
+      throw new ValidationError({
+        message: "O CPF informado é inválido.",
+        action: "Insira um CPF válido para realizar esta operação.",
+      });
+    }
   }
 
   if (!userInputValues.address) {
@@ -160,6 +169,12 @@ async function validateUniqueEmail(email: CreateUserInput["email"]) {
 }
 
 async function validateUniqueCpf(cpf: CreateUserInput["cpf"]) {
+  if (!cpf) {
+    throw new ValidationError({
+      message: "CPF não foi informado ou inválido.",
+      action: "Insira um CPF válido para realizar esta operação.",
+    });
+  }
   const results = await database.query({
     text: `
       SELECT

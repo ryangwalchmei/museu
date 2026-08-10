@@ -4,7 +4,7 @@ import orchestrator from "tests/orchestrator/";
 import user from "models/user";
 import password from "models/password";
 import { cpf } from "cpf-cnpj-validator";
-import { faker } from "@faker-js/faker";
+import { faker, fakerPT_BR } from "@faker-js/faker";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -16,6 +16,7 @@ describe("PATCH /api/v1/users/:username", () => {
   describe("Default user", () => {
     test("Change user self data", async () => {
       const createdUser = await orchestrator.createUser();
+      const phone = fakerPT_BR.phone.number({ style: "national" });
       const response = await fetch(
         `http://localhost:3000/api/v1/users/${createdUser.username}`,
         {
@@ -28,7 +29,7 @@ describe("PATCH /api/v1/users/:username", () => {
             email: "newemail@gwalchmei.com.br",
             password: "newpassword",
             cpf: cpf.generate(),
-            phone: "12345678901",
+            phone,
             address: "Rua tal, cidade Tal",
             notes: "lorem ipsum",
           }),
@@ -44,7 +45,7 @@ describe("PATCH /api/v1/users/:username", () => {
         password: responseBody.password,
         password_changed_at: responseBody.password_changed_at,
         cpf: responseBody.cpf,
-        phone: "12345678901",
+        phone: phone,
         address: "Rua tal, cidade Tal",
         notes: "lorem ipsum",
         features: ["read:activation_token"],
