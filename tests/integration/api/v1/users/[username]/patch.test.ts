@@ -106,7 +106,7 @@ describe("PATCH /api/v1/users/:username", () => {
       });
     });
 
-    test("With nonexistent 'username'", async () => {
+    test("With nonexistent `username`", async () => {
       const response = await fetch(
         "http://localhost:3000/api/v1/users/UsuarioInexistente",
         {
@@ -129,7 +129,7 @@ describe("PATCH /api/v1/users/:username", () => {
       });
     });
 
-    test("With duplicated 'username'", async () => {
+    test("With duplicated `username`", async () => {
       const createdUser1 = await orchestrator.createUser();
 
       await orchestrator.createUser({
@@ -161,7 +161,7 @@ describe("PATCH /api/v1/users/:username", () => {
       });
     });
 
-    test("With duplicated 'email'", async () => {
+    test("With duplicated `email`", async () => {
       const createdUser1 = await orchestrator.createUser();
 
       await orchestrator.createUser({
@@ -193,7 +193,7 @@ describe("PATCH /api/v1/users/:username", () => {
       });
     });
 
-    test("With invalid 'email'", async () => {
+    test("With invalid `email`", async () => {
       const createdUser1 = await orchestrator.createUser();
 
       const response = await fetch(
@@ -221,7 +221,7 @@ describe("PATCH /api/v1/users/:username", () => {
       });
     });
 
-    test("With unique 'username'", async () => {
+    test("With unique `username`", async () => {
       const createdUser = await orchestrator.createUser();
       const response = await fetch(
         `http://localhost:3000/api/v1/users/${createdUser.username}`,
@@ -267,7 +267,7 @@ describe("PATCH /api/v1/users/:username", () => {
       expect(responseBody.updated_at > responseBody.created_at).toBe(true);
     });
 
-    test("With unique 'email'", async () => {
+    test("With unique `email`", async () => {
       const createdUser = await orchestrator.createUser();
 
       const response = await fetch(
@@ -315,7 +315,7 @@ describe("PATCH /api/v1/users/:username", () => {
       expect(responseBody.updated_at > responseBody.created_at).toBe(true);
     });
 
-    test("With new 'password'", async () => {
+    test("With new `password`", async () => {
       const createdUser = await orchestrator.createUser({
         password: "newPassword1",
       });
@@ -364,7 +364,7 @@ describe("PATCH /api/v1/users/:username", () => {
       ).toBe(true);
     });
 
-    test("With duplicated 'cpf'", async () => {
+    test("With duplicated `cpf`", async () => {
       const createdUser1 = await orchestrator.createUser({
         cpf: cpf.generate(),
       });
@@ -398,7 +398,7 @@ describe("PATCH /api/v1/users/:username", () => {
       });
     });
 
-    test("With invalid 'cpf'", async () => {
+    test("With invalid `cpf`", async () => {
       const createdUser = await orchestrator.createUser({
         cpf: cpf.generate(),
       });

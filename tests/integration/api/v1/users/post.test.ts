@@ -75,7 +75,7 @@ describe("POST /api/v1/users", () => {
       expect(incorrectPasswordMatch).toBe(false);
     });
 
-    test("With duplicated 'email'", async () => {
+    test("With duplicated `email`", async () => {
       const cpf = orchestrator.cpf.generate(false);
       const response1 = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",
@@ -118,7 +118,7 @@ describe("POST /api/v1/users", () => {
       });
     });
 
-    test("With duplicated 'username'", async () => {
+    test("With duplicated `username`", async () => {
       const cpf = orchestrator.cpf.generate(false);
       const response1 = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",
@@ -164,7 +164,7 @@ describe("POST /api/v1/users", () => {
       });
     });
 
-    test("With invalid 'username'", async () => {
+    test("With invalid `username`", async () => {
       const response = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",
         headers: {
@@ -191,7 +191,7 @@ describe("POST /api/v1/users", () => {
       });
     });
 
-    test("Without 'CPF'", async () => {
+    test("Without `CPF`", async () => {
       const response = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",
         headers: {
@@ -217,7 +217,7 @@ describe("POST /api/v1/users", () => {
       });
     });
 
-    test("With duplicated 'CPF'", async () => {
+    test("With duplicated `CPF`", async () => {
       const cpfDuplicated = orchestrator.cpf.generate(false);
       const response1 = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",
@@ -263,7 +263,7 @@ describe("POST /api/v1/users", () => {
       });
     });
 
-    test("With invalid 'CPF'", async () => {
+    test("With invalid `CPF`", async () => {
       const response = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",
         headers: {
@@ -290,7 +290,7 @@ describe("POST /api/v1/users", () => {
       });
     });
 
-    test("Without 'address'", async () => {
+    test("Without `address`", async () => {
       const cpf = orchestrator.cpf.generate(false);
       const response = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",
