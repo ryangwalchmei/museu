@@ -26,6 +26,37 @@ async function listAll() {
   }
 }
 
+async function findOneById(id: string) {
+  const userFound = await runSelectQuery(id);
+
+  return userFound;
+
+  async function runSelectQuery(id: string) {
+    const results = await database.query({
+      text: `
+        SELECT
+          *
+        FROM
+          users
+        WHERE
+          id = $1
+        LIMIT
+          1
+        ;`,
+      values: [id],
+    });
+
+    if (results.rowCount === 0) {
+      throw new NotFoundError({
+        message: "O id informado não foi encontrado no sistema.",
+        action: "Verifique se o id está digitado corretamente.",
+      });
+    }
+
+    return results.rows[0];
+  }
+}
+
 async function findOneByUsername(username: CreateUserInput["username"]) {
   const userFound = await runSelectQuery(username);
 
@@ -327,6 +358,7 @@ async function update(
 
 const user = {
   create,
+  findOneById,
   findOneByUsername,
   findOneByEmail,
   listAll,
