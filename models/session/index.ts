@@ -5,12 +5,12 @@ import { UnauthorizedError } from "infra/errors";
 
 const EXPIRATION_IN_MILLISECONDS = 60 * 60 * 24 * 30 * 1000; // 30 Days
 
-async function findOneValidByToken(sessionToken: Session["token"]) {
+async function findOneValidByToken(sessionToken: Session["token"] | undefined) {
   const sessionFound = await runSelectQuery(sessionToken);
 
   return sessionFound;
 
-  async function runSelectQuery(sessionToken: Session["token"]) {
+  async function runSelectQuery(sessionToken: Session["token"] | undefined) {
     const results = await database.query({
       text: `
         SELECT
@@ -61,7 +61,7 @@ async function create(userId: string) {
       values: [token, userId, expiresAt],
     });
 
-    return results.rows[0];
+    return results.rows[0] as Session;
   }
 }
 

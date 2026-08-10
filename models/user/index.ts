@@ -3,7 +3,7 @@ import password from "models/password";
 import { cpfValidator } from "cpf-cnpj-validator";
 import { NotFoundError, ValidationError } from "infra/errors";
 
-import { CreateUserInput } from "./types";
+import { CreateUserInput, User } from "./types";
 
 async function listAll() {
   const allUsers = await runSelectAllQuery();
@@ -180,7 +180,7 @@ async function create(userInputValues: CreateUserInput) {
         userInputValues.avatar_url,
       ],
     });
-    return results.rows[0];
+    return results.rows[0] as User;
   }
 
   function injectDefaultfeaturesInObject(userInputValues: CreateUserInput) {
