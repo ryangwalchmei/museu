@@ -3,12 +3,10 @@ import { createRouter } from "next-connect";
 import controller from "infra/controller";
 import user from "models/user";
 
-const router = createRouter<NextApiRequest, NextApiResponse>();
-
-router.post(postHandler);
-router.get(getHandler);
-
-export default router.handler(controller.errorHandlers);
+export default createRouter<NextApiRequest, NextApiResponse>()
+  .get(getHandler)
+  .post(postHandler)
+  .handler(controller.errorHandlers);
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   const users = await user.listAll();

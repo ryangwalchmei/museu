@@ -3,12 +3,10 @@ import controller from "infra/controller";
 import user from "models/user";
 import { NextApiRequest, NextApiResponse } from "next";
 
-const router = createRouter<NextApiRequest, NextApiResponse>();
-
-router.get(getHandler);
-router.patch(patchHandler);
-
-export default router.handler(controller.errorHandlers);
+export default createRouter<NextApiRequest, NextApiResponse>()
+  .get(getHandler)
+  .patch(patchHandler)
+  .handler(controller.errorHandlers);
 
 async function getHandler(request: NextApiRequest, response: NextApiResponse) {
   const { username } = request.query;
