@@ -16,7 +16,7 @@ function onNoMatchHandler(
 ): void {
   const publicErrorObject = new MethodNotAllowedError();
 
-  response.status(publicErrorObject.statusCode).json(publicErrorObject);
+  return response.status(publicErrorObject.statusCode).json(publicErrorObject);
 }
 
 function onErrorHandler(
@@ -27,11 +27,14 @@ function onErrorHandler(
   if (
     error instanceof ValidationError ||
     error instanceof NotFoundError ||
-    error instanceof ForbiddenError ||
-    error instanceof UnauthorizedError
+    error instanceof ForbiddenError
   ) {
-    response.status(error.statusCode).json(error);
-    return;
+    return response.status(error.statusCode).json(error);
+  }
+
+  if (error instanceof UnauthorizedError) {
+    clearSessionCookie(response);
+    return response.status(error.statusCode).json(error);
   }
 
   const publicErrorObject = new InternalServerError({
@@ -47,7 +50,7 @@ async function setSessionCookie(
   sessionToken: string,
   response: NextApiResponse,
 ) {
-  response.setHeader(
+  return response.setHeader(
     "Set-Cookie",
     cookie.stringifySetCookie({
       name: "session_id",
@@ -60,12 +63,26 @@ async function setSessionCookie(
   );
 }
 
+async function clearSessionCookie(response: NextApiResponse) {
+  const setCookie = cookie.stringifySetCookie({
+    name: "session_id",
+    value: "invalid",
+    path: "/",
+    maxAge: -1,
+    secure: process.env.NODE_ENV === "production",
+    httpOnly: true,
+  });
+
+  return response.setHeader("Set-Cookie", setCookie);
+}
+
 const controller = {
   errorHandlers: {
     onNoMatch: onNoMatchHandler,
     onError: onErrorHandler,
   },
   setSessionCookie,
+  clearSessionCookie,
 };
 
 export default controller;
