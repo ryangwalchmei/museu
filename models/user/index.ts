@@ -3,7 +3,7 @@ import password from "models/password";
 import { cpfValidator } from "cpf-cnpj-validator";
 import { NotFoundError, ValidationError } from "infra/errors";
 
-import { CreateUserInput } from "./types";
+import { CreateUserInput, User } from "./types";
 
 async function listAll() {
   const allUsers = await runSelectAllQuery();
@@ -23,6 +23,37 @@ async function listAll() {
     });
 
     return results.rows;
+  }
+}
+
+async function findOneById(id: string) {
+  const userFound = await runSelectQuery(id);
+
+  return userFound;
+
+  async function runSelectQuery(id: string) {
+    const results = await database.query({
+      text: `
+        SELECT
+          *
+        FROM
+          users
+        WHERE
+          id = $1
+        LIMIT
+          1
+        ;`,
+      values: [id],
+    });
+
+    if (results.rowCount === 0) {
+      throw new NotFoundError({
+        message: "O id informado não foi encontrado no sistema.",
+        action: "Verifique se o id está digitado corretamente.",
+      });
+    }
+
+    return results.rows[0];
   }
 }
 
@@ -149,7 +180,7 @@ async function create(userInputValues: CreateUserInput) {
         userInputValues.avatar_url,
       ],
     });
-    return results.rows[0];
+    return results.rows[0] as User;
   }
 
   function injectDefaultfeaturesInObject(userInputValues: CreateUserInput) {
@@ -327,6 +358,7 @@ async function update(
 
 const user = {
   create,
+  findOneById,
   findOneByUsername,
   findOneByEmail,
   listAll,
