@@ -1,5 +1,6 @@
 import database from "infra/database";
 import password from "models/password";
+import { cpfValidator } from "cpf-cnpj-validator";
 import { NotFoundError, ValidationError } from "infra/errors";
 
 import { CreateUserInput } from "./types";
@@ -184,10 +185,100 @@ async function hashPasswordInObject(userInputValues: CreateUserInput) {
   userInputValues.password = hashedPassword;
 }
 
+async function update(
+  username: CreateUserInput["username"],
+  userInputValues: CreateUserInput,
+) {
+  if (!userInputValues || Object.keys(userInputValues).length === 0) {
+    throw new ValidationError({
+      message: "Nenhum dado foi enviado para atualização.",
+      action: "Envie pelo menos um dado para atualizar o usuário.",
+    });
+  }
+
+  if (userInputValues.email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(userInputValues.email)) {
+      throw new ValidationError({
+        message: "O email informado é inválido.",
+        action: "Insira um email válido para realizar esta operação.",
+      });
+    }
+  }
+
+  if (userInputValues.cpf) {
+    await validateUniqueCpf(userInputValues.cpf);
+    const isValid = cpfValidator.isValid(userInputValues.cpf);
+
+    if (!isValid) {
+      throw new ValidationError({
+        message: "O CPF informado é inválido.",
+        action: "Insira um CPF válido para realizar esta operação.",
+      });
+    }
+  }
+
+  const currentUser = await findOneByUsername(username);
+
+  if ("username" in userInputValues) {
+    await validateUniqueUsername(userInputValues.username);
+  }
+
+  if ("email" in userInputValues) {
+    await validateUniqueEmail(userInputValues.email);
+  }
+
+  if ("password" in userInputValues) {
+    await hashPasswordInObject(userInputValues);
+  }
+
+  const userWithNewValues = { ...currentUser, ...userInputValues };
+
+  const updatedUser = await runUpdateQuery(userWithNewValues);
+  return updatedUser;
+
+  async function runUpdateQuery(
+    userWithNewValues: CreateUserInput & { id?: string },
+  ) {
+    const results = await database.query({
+      text: `
+        UPDATE
+          users
+        SET
+          username = $2,
+          email = $3,
+          password = $4,
+          updated_at = timezone('utc', now()),
+          cpf = $5,
+          phone = $6,
+          address = $7,
+          notes = $8
+        WHERE
+          id = $1
+        RETURNING
+          *
+      `,
+      values: [
+        userWithNewValues.id,
+        userWithNewValues.username,
+        userWithNewValues.email,
+        userWithNewValues.password,
+        userWithNewValues.cpf,
+        userWithNewValues.phone,
+        userWithNewValues.address,
+        userWithNewValues.notes,
+      ],
+    });
+
+    return results.rows[0];
+  }
+}
+
 const user = {
   create,
   findOneByUsername,
   listAll,
+  update,
 };
 
 export default user;
