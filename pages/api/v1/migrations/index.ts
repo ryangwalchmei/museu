@@ -3,12 +3,10 @@ import migrator from "models/migrator";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
-const router = createRouter<NextApiRequest, NextApiResponse>();
-
-router.get(getHandler);
-router.post(postHandler);
-
-export default router.handler(controller.errorHandlers);
+export default createRouter<NextApiRequest, NextApiResponse>()
+  .get(getHandler)
+  .post(postHandler)
+  .handler(controller.errorHandlers);
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   const pendingMigrations = await migrator.listPendingMigrations();

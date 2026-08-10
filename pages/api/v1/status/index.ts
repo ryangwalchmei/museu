@@ -3,10 +3,9 @@ import database from "infra/database";
 import { createRouter } from "next-connect";
 import controller from "infra/controller";
 
-const router = createRouter<NextApiRequest, NextApiResponse>();
-router.get(getHandler);
-
-export default router.handler(controller.errorHandlers);
+export default createRouter<NextApiRequest, NextApiResponse>()
+  .get(getHandler)
+  .handler(controller.errorHandlers);
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   const updatedAt = new Date().toISOString();
@@ -28,7 +27,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   const databaseOpenedConnectionsValue =
     databaseOpenedConnectionsResult.rows[0].count;
 
-  res.status(200).json({
+  const statusObject = {
     updated_at: updatedAt,
     dependencies: {
       database: {
@@ -37,5 +36,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
         opened_connections: databaseOpenedConnectionsValue,
       },
     },
-  });
+  };
+
+  return res.status(200).json(statusObject);
 }

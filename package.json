@@ -21,7 +21,10 @@
     "migration:create": "node-pg-migrate create"
   },
   "dependencies": {
+    "@faker-js/faker": "^10.5.0",
     "async-retry": "^1.3.3",
+    "bcryptjs": "^3.0.3",
+    "cpf-cnpj-validator": "^2.1.2",
     "dotenv": "^17.4.2",
     "dotenv-expand": "^1000.0.0",
     "hono": "^4.13.0",
@@ -30,7 +33,8 @@
     "node-pg-migrate": "^9.0.0",
     "pg": "^8.22.0",
     "react": "19.2.7",
-    "react-dom": "19.2.7"
+    "react-dom": "19.2.7",
+    "uuid": "^14.0.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.1",
