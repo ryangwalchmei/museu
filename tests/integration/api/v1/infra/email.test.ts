@@ -19,11 +19,25 @@ describe("infra/email.js", () => {
       text: "Teste de corpo.",
     });
 
-    await email.send({
+    const sentedEmail = await email.send({
       from: "Ryan Gwalchmei <contato@gwalchmei.com.br>",
       to: "contato@gwalchmei.com.br",
       subject: "Último email enviado",
       text: "Corpo do último email.",
+    });
+
+    expect(sentedEmail).toHaveProperty("messageId");
+    expect(sentedEmail).toHaveProperty("envelope");
+    expect(sentedEmail).toHaveProperty("accepted");
+    expect(sentedEmail).toHaveProperty("rejected");
+    expect(sentedEmail).toHaveProperty("response");
+
+    expect(sentedEmail.accepted).toContain("contato@gwalchmei.com.br");
+    expect(sentedEmail.rejected).toHaveLength(0);
+    expect(sentedEmail.response).toBe("250 Message accepted");
+    expect(sentedEmail.envelope).toEqual({
+      from: "contato@gwalchmei.com.br",
+      to: ["contato@gwalchmei.com.br"],
     });
 
     const lastEmail = await orchestrator.getLastEmail();
