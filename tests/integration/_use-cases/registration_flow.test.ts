@@ -198,4 +198,91 @@ describe("Use case: Registration Flow", () => {
       });
     });
   });
+
+  describe("User already activated attempting to use the same token again.", () => {
+    let createUserResponseBody: User;
+    let activationTokenId: string;
+
+    test("Create user account", async () => {
+      const cpf = orchestrator.cpf.generate(false);
+      const avatarUrl = faker.image.avatar();
+      const createUserResponse = await fetch(
+        "http://localhost:3000/api/v1/users",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: "activation_again",
+            email: "activation.again@gwalchmei.com.br",
+            password: "RegistrationFlowPassword",
+            cpf,
+            address: "rua tal, cidade tal, estado tal, pais tal",
+            phone: "91984546411",
+            avatar_url: avatarUrl,
+          }),
+        },
+      );
+
+      expect(createUserResponse.status).toBe(201);
+
+      createUserResponseBody = (await createUserResponse.json()) as User;
+    });
+
+    test("Receive activation email", async () => {
+      const lastEmail = await orchestrator.getLastEmail();
+
+      expect(lastEmail.sender).toBe("<contato@gwalchmei.com.br>");
+      expect(lastEmail.recipients[0]).toBe(
+        "<activation.again@gwalchmei.com.br>",
+      );
+      expect(lastEmail.subject).toBe("Ative seu cadastro!");
+      expect(lastEmail.text).toContain("activation_again");
+
+      activationTokenId = orchestrator.extractUUID(lastEmail.text)!;
+
+      expect(lastEmail.text).toContain(
+        `${webserver.origin}/cadastro/ativar/${activationTokenId}`,
+      );
+
+      const activationTokenObject = await activation.findOneValidById(
+        activationTokenId!,
+      );
+
+      expect(activationTokenObject.user_id).toBe(createUserResponseBody.id);
+      expect(activationTokenObject.use_at).toBe(null);
+    });
+
+    test("Activate account for first time", async () => {
+      const activationResponse = await fetch(
+        `${webserver.origin}/api/v1/activations/${activationTokenId}`,
+        {
+          method: "PATCH",
+        },
+      );
+
+      expect(activationResponse.status).toBe(200);
+
+      const activationResponseBody = await activationResponse.json();
+      expect(Date.parse(activationResponseBody.use_at)).not.toBeNaN();
+
+      const activatedUser = await user.findOneByUsername("RegistrationFlow");
+      expect(activatedUser.features).toEqual([
+        "create:session",
+        "read:session",
+      ]);
+    });
+
+    test("Activate account for secound time", async () => {
+      const activationResponse = await fetch(
+        `${webserver.origin}/api/v1/activations/${activationTokenId}`,
+        {
+          method: "PATCH",
+        },
+      );
+
+      expect(activationResponse.status).toBe(404);
+    });
+  });
 });
