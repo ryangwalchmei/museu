@@ -20,7 +20,7 @@ async function postHandler(req: RequestWithContext, res: NextApiResponse) {
   const userInputValues = req.body;
   const newUser = await user.create(userInputValues);
 
-  const activationToken = await activation.create(newUser.id);
+  const activationToken = await activation.create(newUser);
 
   await activation.sendEmailToUser(newUser, activationToken);
 

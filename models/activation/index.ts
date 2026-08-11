@@ -5,6 +5,7 @@ import { ActivationToken } from "./types";
 import { ForbiddenError, NotFoundError } from "infra/errors";
 import user from "models/user";
 import authorization from "models/authorization";
+import { User } from "models/user/types";
 
 const EXPIRATION_IN_MILLISECONDS = 60 * 15 * 1000;
 
@@ -41,10 +42,10 @@ async function findOneValidById(validationTokenId: string) {
   }
 }
 
-async function create(userId: string) {
+async function create(user: User) {
   const expiresAt = new Date(Date.now() + EXPIRATION_IN_MILLISECONDS);
 
-  const newToken = await runInsertQuery(userId, expiresAt);
+  const newToken = await runInsertQuery(user.id, expiresAt);
   return newToken;
 
   async function runInsertQuery(userId: string, expiresAt: Date) {

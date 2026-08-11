@@ -41,7 +41,7 @@ describe("PATCH /activations/[token_id]", () => {
       });
 
       const createdUser = await orchestrator.createUser();
-      const expiredActivationToken = await activation.create(createdUser.id);
+      const expiredActivationToken = await activation.create(createdUser);
 
       jest.useRealTimers();
 
@@ -67,7 +67,7 @@ describe("PATCH /activations/[token_id]", () => {
 
     test(`With already used token`, async () => {
       const createdUser = await orchestrator.createUser();
-      const activationToken = await activation.create(createdUser.id);
+      const activationToken = await activation.create(createdUser);
 
       const activationResponse1 = await fetch(
         `${webserver.origin}/api/v1/activations/${activationToken.id}`,
@@ -99,7 +99,7 @@ describe("PATCH /activations/[token_id]", () => {
 
     test(`With token valid`, async () => {
       const createdUser = await orchestrator.createUser();
-      const activationToken = await activation.create(createdUser.id);
+      const activationToken = await activation.create(createdUser);
 
       const activationResponse = await fetch(
         `${webserver.origin}/api/v1/activations/${activationToken.id}`,
@@ -151,7 +151,7 @@ describe("PATCH /activations/[token_id]", () => {
     test("With valid token but already activated user", async () => {
       const createdUser = await orchestrator.createUser();
       await orchestrator.activateUser(createdUser);
-      const activationToken = await activation.create(createdUser.id);
+      const activationToken = await activation.create(createdUser);
 
       const response = await fetch(
         `http://localhost:3000/api/v1/activations/${activationToken.id}`,
@@ -180,7 +180,7 @@ describe("PATCH /activations/[token_id]", () => {
       const user1SessionObject = await orchestrator.createSession(user1);
 
       const user2 = await orchestrator.createUser();
-      const user2ActivationToken = await activation.create(user2.id);
+      const user2ActivationToken = await activation.create(user2);
 
       const activationResponse = await fetch(
         `${webserver.origin}/api/v1/activations/${user2ActivationToken.id}`,
