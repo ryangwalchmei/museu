@@ -1,3 +1,7 @@
+import { defaultTransporter } from "infra/email";
+import { createTransport, Transporter } from "nodemailer";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
+
 export const emailHttpUrl = `http://${process.env.EMAIL_HTTP_HOST}:${process.env.EMAIL_HTTP_PORT}`;
 
 async function getAllEmails() {
@@ -40,10 +44,18 @@ async function getTextById(id: string) {
   return emailTextBody;
 }
 
+function createACustomTransporter(
+  customTransporter?:
+    SMTPTransport.Options | Transporter<SMTPTransport.SentMessageInfo>,
+) {
+  return createTransport(customTransporter || defaultTransporter);
+}
+
 const orchestrator = {
   getLastEmail,
   deleteAllEmails,
   getAllEmails,
+  createACustomTransporter,
 };
 
 export default orchestrator;
