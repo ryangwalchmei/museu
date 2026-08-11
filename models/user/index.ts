@@ -53,7 +53,7 @@ async function findOneById(id: string) {
       });
     }
 
-    return results.rows[0];
+    return results.rows[0] as User;
   }
 }
 

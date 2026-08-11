@@ -3,9 +3,11 @@ import { createRouter } from "next-connect";
 import controller from "infra/controller";
 import authentication from "models/authentication";
 import session from "models/session";
+import { RequestWithContext } from "infra/controller/types";
 
-export default createRouter<NextApiRequest, NextApiResponse>()
-  .post(postHandler)
+export default createRouter<RequestWithContext, NextApiResponse>()
+  .use(controller.injectAnonymousOrUser)
+  .post(controller.canRequest("create:session"), postHandler)
   .delete(deleteHandler)
   .handler(controller.errorHandlers);
 
