@@ -1,5 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { beforeAll, describe, expect, test } from "@jest/globals";
+import activation from "models/activation";
+import { User } from "models/user/types";
 
 import orchestrator from "tests/orchestrator";
 
@@ -11,6 +13,7 @@ beforeAll(async () => {
 });
 
 describe("Use case: Registration Flow (all successfull)", () => {
+  let createUserResponseBody: User;
   test("Create user account", async () => {
     const cpf = orchestrator.cpf.generate(false);
     const avatarUrl = faker.image.avatar();
@@ -35,7 +38,7 @@ describe("Use case: Registration Flow (all successfull)", () => {
 
     expect(createUserResponse.status).toBe(201);
 
-    const createUserResponseBody = await createUserResponse.json();
+    createUserResponseBody = (await createUserResponse.json()) as User;
 
     expect(createUserResponseBody).toEqual({
       id: createUserResponseBody.id,
@@ -58,7 +61,21 @@ describe("Use case: Registration Flow (all successfull)", () => {
     });
   });
 
-  // test("Receive activation email", async () => {});
+  test("Receive activation email", async () => {
+    const lastEmail = await orchestrator.getLastEmail();
+
+    const activationToken = await activation.findOneByUserId(
+      createUserResponseBody.id,
+    );
+
+    expect(lastEmail.sender).toBe("<contato@gwalchmei.com.br>");
+    expect(lastEmail.recipients[0]).toBe(
+      "<registration.flow@gwalchmei.com.br>",
+    );
+    expect(lastEmail.subject).toBe("Ative seu cadastro!");
+    expect(lastEmail.text).toContain("RegistrationFlow");
+    expect(lastEmail.text).toContain(activationToken.id);
+  });
 
   // test("Activate account", async () => {});
 
