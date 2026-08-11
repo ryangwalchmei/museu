@@ -1,20 +1,25 @@
 import { createRouter } from "next-connect";
 import controller from "infra/controller";
 import activation from "models/activation";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
+import { RequestWithContext } from "infra/controller/types";
 
-export default createRouter<NextApiRequest, NextApiResponse>()
-  .patch(patchHandler)
+export default createRouter<RequestWithContext, NextApiResponse>()
+  .use(controller.injectAnonymousOrUser)
+  .patch(controller.canRequest("read:activation_token"), patchHandler)
   .handler(controller.errorHandlers);
 
-async function patchHandler(req: NextApiRequest, res: NextApiResponse) {
+async function patchHandler(req: RequestWithContext, res: NextApiResponse) {
   const { token_id } = req.query;
 
-  const validTokenObject = await activation.findOneValidById(String(token_id));
-  const usedActivationToken = await activation.markTokenAsUsed(
-    validTokenObject.id,
+  const validActivationToken = await activation.findOneValidById(
+    String(token_id),
   );
-  await activation.activatedUserByUserId(usedActivationToken.user_id);
+  await activation.activatedUserByUserId(validActivationToken.user_id);
+
+  const usedActivationToken = await activation.markTokenAsUsed(
+    String(token_id),
+  );
 
   return res.status(200).json(usedActivationToken);
 }
