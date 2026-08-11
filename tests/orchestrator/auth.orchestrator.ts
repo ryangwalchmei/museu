@@ -9,7 +9,10 @@ async function createSession(userObject: User) {
 }
 
 async function activateUser(inactiveUser: User) {
-  return await user.setFeatures(inactiveUser.id, ["create:session"]);
+  return await user.setFeatures(inactiveUser.id, [
+    "create:session",
+    "read:session",
+  ]);
 }
 
 async function createAuthenticatedUser(userObject?: CreateUserInputNoRequired) {

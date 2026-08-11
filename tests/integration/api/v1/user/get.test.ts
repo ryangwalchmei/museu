@@ -11,10 +11,28 @@ beforeAll(async () => {
 });
 
 describe("GET /api/v1/user", () => {
+  describe("Anonymous user", () => {
+    test("Retrieving the endpoint", async () => {
+      const response = await fetch("http://localhost:3000/api/v1/user");
+
+      expect(response.status).toBe(403);
+
+      const responseBody = await response.json();
+      expect(responseBody).toEqual({
+        name: "ForbiddenError",
+        message: "Você não possui permissão para executar essa ação",
+        action: 'Verifique se seu usuário possui a feature "read:session".',
+        status_code: 403,
+      });
+    });
+  });
+
   describe("Default user", () => {
     test("With valid session", async () => {
       const { session: sessionObject, user } =
         await orchestrator.createAuthenticatedUser();
+
+      const activatedUser = await orchestrator.activateUser(user);
 
       const response = await fetch("http://localhost:3000/api/v1/user", {
         headers: {
@@ -36,13 +54,13 @@ describe("GET /api/v1/user", () => {
         username: user.username,
         email: user.email,
         password: user.password,
-        features: user.features,
+        features: ["create:session", "read:session"],
         cpf: user.cpf,
         phone: user.phone,
         address: user.address,
         notes: user.notes,
         created_at: user.created_at.toISOString(),
-        updated_at: user.updated_at.toISOString(),
+        updated_at: activatedUser.updated_at.toISOString(),
         avatar_url: user.avatar_url,
         banned_at: user.banned_at,
         banned_by: user.banned_by,
@@ -88,6 +106,7 @@ describe("GET /api/v1/user", () => {
 
       const { session: sessionObject, user } =
         await orchestrator.createAuthenticatedUser();
+      const activatedUser = await orchestrator.activateUser(user);
 
       jest.useRealTimers();
 
@@ -106,13 +125,13 @@ describe("GET /api/v1/user", () => {
         username: user.username,
         email: user.email,
         password: user.password,
-        features: user.features,
+        features: ["create:session", "read:session"],
         cpf: user.cpf,
         phone: user.phone,
         address: user.address,
         notes: user.notes,
         created_at: user.created_at.toISOString(),
-        updated_at: user.updated_at.toISOString(),
+        updated_at: activatedUser.updated_at.toISOString(),
         avatar_url: user.avatar_url,
         banned_at: user.banned_at,
         banned_by: user.banned_by,
@@ -191,8 +210,9 @@ describe("GET /api/v1/user", () => {
         now: new Date(Date.now() - session.EXPIRATION_IN_MILLISECONDS),
       });
 
-      const { session: sessionObject } =
+      const { session: sessionObject, user } =
         await orchestrator.createAuthenticatedUser();
+      await orchestrator.activateUser(user);
 
       jest.useRealTimers();
 
