@@ -1,6 +1,12 @@
-import nodemailer, { type SendMailOptions } from "nodemailer";
+import {
+  createTransport,
+  type SendMailOptions,
+  type Transporter,
+} from "nodemailer";
 
-const transporter = nodemailer.createTransport({
+import { ServiceError } from "./errors";
+
+export const defaultTransporter = createTransport({
   host: process.env.EMAIL_SMTP_HOST,
   port: Number(process.env.EMAIL_SMTP_PORT),
   auth: {
@@ -10,8 +16,19 @@ const transporter = nodemailer.createTransport({
   secure: process.env.NODE_ENV === "production",
 });
 
-async function send(mailOptions: SendMailOptions): Promise<void> {
-  await transporter.sendMail(mailOptions);
+async function send(
+  mailOptions: SendMailOptions,
+  transport: Transporter = defaultTransporter,
+) {
+  try {
+    return await transport.sendMail(mailOptions);
+  } catch (error) {
+    throw new ServiceError({
+      message: "Falha ao enviar email. O serviço de SMTP não está disponível.",
+      action: "Confira se o servidor de SMTP está ativo e tente novamente.",
+      cause: error as Error,
+    });
+  }
 }
 
 const email = {
