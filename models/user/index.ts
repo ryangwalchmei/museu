@@ -380,6 +380,31 @@ async function setFeatures(userId: string, features: string[]) {
   }
 }
 
+async function addFeatures(userId: string, features: string[]) {
+  const currentUser = await findOneById(userId);
+  const updatedUser = await runUpdateQuery(currentUser.id, features);
+  return updatedUser;
+
+  async function runUpdateQuery(userId: string, features: string[]) {
+    const results = await database.query({
+      text: `
+        UPDATE
+          users
+        SET
+          features = array_cat(features, $2),
+          updated_at = timezone('utc', now())
+        WHERE
+          id = $1
+        RETURNING
+          *
+      ;`,
+      values: [userId, features],
+    });
+
+    return results.rows[0] as User;
+  }
+}
+
 const user = {
   create,
   findOneById,
@@ -388,6 +413,7 @@ const user = {
   listAll,
   update,
   setFeatures,
+  addFeatures,
 };
 
 export default user;

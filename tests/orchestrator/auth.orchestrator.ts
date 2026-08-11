@@ -25,11 +25,15 @@ async function createAuthenticatedUser(userObject?: CreateUserInputNoRequired) {
     user: createdUser,
   };
 }
+async function addFeaturesToUser(userId: string, features: string[]) {
+  return await user.addFeatures(userId, features);
+}
 
 const orchestrator = {
   createSession,
   createAuthenticatedUser,
   activateUser,
+  addFeaturesToUser,
 };
 
 export default orchestrator;
