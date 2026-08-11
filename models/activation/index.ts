@@ -2,27 +2,39 @@ import database from "infra/database";
 import email from "infra/email";
 import webserver from "infra/webserver";
 import { ActivationToken } from "./types";
+import { NotFoundError } from "infra/errors";
 
 const EXPIRATION_IN_MILLISECONDS = 60 * 15 * 1000;
 
-async function findOneByUserId(userId: string) {
-  const newToken = await runSelectQuery(userId);
-  return newToken;
+async function findOneValidById(validationTokenId: string) {
+  const token = await runSelectQuery(validationTokenId);
+  return token;
 
-  async function runSelectQuery(userId: string) {
+  async function runSelectQuery(validationTokenId: string) {
     const results = await database.query({
       text: `
-        SELECT
-          *
-        FROM
-          user_activation_tokens
-        WHERE
-          user_id = $1
-        LIMIT
-          1
+      SELECT
+        * 
+      FROM 
+        user_activation_tokens 
+      WHERE 
+        id = $1
+        AND expires_at > NOW()
+        AND use_at IS NULL
+      LIMIT
+        1
       ;`,
-      values: [userId],
+      values: [validationTokenId],
     });
+
+    if (results.rowCount == 0) {
+      throw new NotFoundError({
+        message:
+          "O token de ativação utilizado não foi encontrado no sistema ou expirou.",
+        action: "Faça um novo cadastro.",
+      });
+    }
+
     return results.rows[0];
   }
 }
@@ -69,7 +81,7 @@ Equipe Trainerfit`,
 const activation = {
   sendEmailToUser,
   create,
-  findOneByUserId,
+  findOneValidById,
 };
 
 export default activation;
