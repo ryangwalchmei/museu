@@ -3,6 +3,7 @@ import email from "infra/email";
 import webserver from "infra/webserver";
 import { ActivationToken } from "./types";
 import { NotFoundError } from "infra/errors";
+import user from "models/user";
 
 const EXPIRATION_IN_MILLISECONDS = 60 * 15 * 1000;
 
@@ -78,10 +79,40 @@ Equipe Trainerfit`,
   });
 }
 
+async function markTokenAsUsed(tokenId: string) {
+  const token = await runUpdateQuery(tokenId);
+  return token;
+
+  async function runUpdateQuery(tokenId: string) {
+    const tokenUpdateResults = await database.query({
+      text: `
+       UPDATE 
+          user_activation_tokens 
+        SET
+          use_at = timezone('utc', NOW()),
+          updated_at = timezone('utc', NOW())
+        WHERE
+          id = $1
+        RETURNING 
+          *
+      ;`,
+      values: [tokenId],
+    });
+    return tokenUpdateResults.rows[0];
+  }
+}
+
+async function activatedUserByUserId(userId: string) {
+  const activatedUser = await user.setFeatures(userId, ["create:session"]);
+  return activatedUser;
+}
+
 const activation = {
   sendEmailToUser,
   create,
   findOneValidById,
+  activatedUserByUserId,
+  markTokenAsUsed,
 };
 
 export default activation;
