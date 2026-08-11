@@ -11,7 +11,7 @@ async function getAuthenticatedUser(
     const storedUser = await findUserByEmail(providedEmail);
     await validatePassword(providedPassword, storedUser.password);
 
-    return storedUser;
+    return storedUser as User;
   } catch (error) {
     if (error instanceof UnauthorizedError) {
       throw new UnauthorizedError({

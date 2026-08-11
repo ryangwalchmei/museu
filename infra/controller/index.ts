@@ -11,6 +11,7 @@ import session from "models/session";
 import user from "models/user";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { RequestWithContext } from "./types";
+import authorization from "models/authorization";
 
 function onNoMatchHandler(
   _request: NextApiRequest,
@@ -122,7 +123,7 @@ function canRequest(feature: string) {
   ) {
     const userTryingToRequest = request.context.user;
 
-    if (userTryingToRequest.features.includes(feature)) {
+    if (authorization.can(userTryingToRequest, feature)) {
       return next();
     }
 

@@ -1,9 +1,11 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 import controller from "infra/controller";
 import authentication from "models/authentication";
 import session from "models/session";
 import { RequestWithContext } from "infra/controller/types";
+import authorization from "models/authorization";
+import { ForbiddenError } from "infra/errors";
 
 export default createRouter<RequestWithContext, NextApiResponse>()
   .use(controller.injectAnonymousOrUser)
@@ -11,13 +13,20 @@ export default createRouter<RequestWithContext, NextApiResponse>()
   .delete(deleteHandler)
   .handler(controller.errorHandlers);
 
-async function postHandler(req: NextApiRequest, res: NextApiResponse) {
+async function postHandler(req: RequestWithContext, res: NextApiResponse) {
   const userInputValues = req.body;
 
   const authenticatedUser = await authentication.getAuthenticatedUser(
     userInputValues.email,
     userInputValues.password,
   );
+
+  if (!authorization.can(authenticatedUser, "create:session")) {
+    throw new ForbiddenError({
+      message: "Você não possui permissão para fazer login.",
+      action: "Contate o suporte caso você acredite que isto seja um engano.",
+    });
+  }
 
   const newSession = await session.create(authenticatedUser.id);
 
@@ -26,7 +35,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   return res.status(201).json(newSession);
 }
 
-async function deleteHandler(req: NextApiRequest, res: NextApiResponse) {
+async function deleteHandler(req: RequestWithContext, res: NextApiResponse) {
   const sessionToken = req.cookies.session_id;
 
   const sessionObject = await session.findOneValidByToken(sessionToken);
