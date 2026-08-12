@@ -1,5 +1,4 @@
 import session from "models/session";
-// import orchestratoUser from "tests/orchestrator/domains/users.orchestrator";
 import orch from "tests/orchestrator";
 import { User, CreateUserInputNoRequired } from "models/user/types";
 import user from "models/user";
@@ -17,12 +16,21 @@ async function activateUser(inactiveUser: User) {
 
 async function createAuthenticatedUser(userObject?: CreateUserInputNoRequired) {
   const createdUser = await orch.createUser(userObject);
+  const activatedUser = await activateUser(createdUser);
+  const sessionObject = await createSession(activatedUser);
 
-  const sessionObject = await createSession(createdUser);
+  let userWithSession: User;
+
+  if (userObject?.features) {
+    userWithSession = await addFeaturesToUser(
+      activatedUser.id,
+      userObject.features,
+    );
+  }
 
   return {
     session: sessionObject,
-    user: createdUser,
+    user: userWithSession! ?? activatedUser,
   };
 }
 async function addFeaturesToUser(userId: string, features: string[]) {
