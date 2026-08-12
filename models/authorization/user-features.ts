@@ -2,6 +2,7 @@ const availableFeatures = new Set([
   // USER
   "create:user",
   "read:user",
+  "read:user:others",
 
   // ACTIVATION_TOKEN
   "read:activation_token",

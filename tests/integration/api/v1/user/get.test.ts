@@ -32,8 +32,6 @@ describe("GET /api/v1/user", () => {
       const { session: sessionObject, user } =
         await orchestrator.createAuthenticatedUser();
 
-      const activatedUser = await orchestrator.activateUser(user);
-
       const response = await fetch("http://localhost:3000/api/v1/user", {
         headers: {
           Cookie: `session_id=${sessionObject.token}`,
@@ -60,7 +58,7 @@ describe("GET /api/v1/user", () => {
         address: user.address,
         notes: user.notes,
         created_at: user.created_at.toISOString(),
-        updated_at: activatedUser.updated_at.toISOString(),
+        updated_at: user.updated_at.toISOString(),
         avatar_url: user.avatar_url,
         banned_at: user.banned_at,
         banned_by: user.banned_by,
@@ -106,7 +104,6 @@ describe("GET /api/v1/user", () => {
 
       const { session: sessionObject, user } =
         await orchestrator.createAuthenticatedUser();
-      const activatedUser = await orchestrator.activateUser(user);
 
       jest.useRealTimers();
 
@@ -131,7 +128,7 @@ describe("GET /api/v1/user", () => {
         address: user.address,
         notes: user.notes,
         created_at: user.created_at.toISOString(),
-        updated_at: activatedUser.updated_at.toISOString(),
+        updated_at: user.updated_at.toISOString(),
         avatar_url: user.avatar_url,
         banned_at: user.banned_at,
         banned_by: user.banned_by,
@@ -210,9 +207,8 @@ describe("GET /api/v1/user", () => {
         now: new Date(Date.now() - session.EXPIRATION_IN_MILLISECONDS),
       });
 
-      const { session: sessionObject, user } =
+      const { session: sessionObject } =
         await orchestrator.createAuthenticatedUser();
-      await orchestrator.activateUser(user);
 
       jest.useRealTimers();
 

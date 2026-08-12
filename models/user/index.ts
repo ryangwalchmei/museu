@@ -84,7 +84,7 @@ async function findOneByUsername(username: CreateUserInput["username"]) {
       });
     }
 
-    return results.rows[0];
+    return results.rows[0] as User;
   }
 }
 
