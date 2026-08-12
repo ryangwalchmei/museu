@@ -66,6 +66,25 @@ function filterInput(user: User, feature: string, input: any) {
   }
 }
 
+function filterOutput(
+  user: User | (AnonymousUser & { id?: string }),
+  feature: string,
+  resource: any,
+) {
+  validateUser(user);
+  validateFeature(feature);
+  validateResource(resource);
+  if (feature == "read:user") {
+    return {
+      id: resource.id,
+      username: resource.username,
+      features: resource.features,
+      created_at: resource.created_at,
+      updated_at: resource.updated_at,
+    };
+  }
+}
+
 function validateUser(user: User | (AnonymousUser & { id?: string })) {
   if (!user) {
     const validationError = new ValidationError({
@@ -113,9 +132,19 @@ function validateFeature(feature: string) {
   }
 }
 
+function validateResource(resource: any) {
+  if (!resource) {
+    throw new InternalServerError({
+      cause:
+        "É necessário fornecer um `resource` em `authorization.filterOutput()`.",
+    });
+  }
+}
+
 const authorization = {
   can,
   filterInput,
+  filterOutput,
 };
 
 export default authorization;
