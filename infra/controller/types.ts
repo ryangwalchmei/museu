@@ -9,4 +9,5 @@ export type RequestWithContext = {
 
 export type AnonymousUser = {
   features: string[];
+  username?: string;
 };
