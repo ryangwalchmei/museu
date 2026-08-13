@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnonymousUser } from "infra/controller/types";
 import { InternalServerError, ValidationError } from "infra/errors";
-import { User } from "models/user/types";
+import { User, UserSecureOutputProps } from "models/user/types";
 import availableFeatures from "models/authorization/user-features";
 
 export function can(
@@ -74,13 +74,19 @@ function filterOutput(
   validateUser(user);
   validateFeature(feature);
   validateResource(resource);
+
   if (feature == "read:user") {
+    const user: UserSecureOutputProps = resource;
     return {
-      id: resource.id,
-      username: resource.username,
-      features: resource.features,
-      created_at: resource.created_at,
-      updated_at: resource.updated_at,
+      id: user.id,
+      username: user.username,
+      features: user.features,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+      address: user.address,
+      notes: user.notes,
+      phone: user.phone,
+      avatar_url: user.avatar_url,
     };
   }
 }

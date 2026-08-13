@@ -5,6 +5,7 @@ import user from "models/user";
 import password from "models/password";
 import { faker } from "@faker-js/faker";
 import { cpf } from "cpf-cnpj-validator";
+import { UserSecureOutputProps } from "models/user/types";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -34,31 +35,23 @@ describe("POST /api/v1/users", () => {
       });
 
       expect(response.status).toBe(201);
-      const responseBody = await response.json();
+      const responseBody: UserSecureOutputProps = await response.json();
 
       expect(responseBody).toEqual({
         id: responseBody.id,
         username: "ryangwalchmei",
-        email: "contato@gwalchmei.com.br",
-        password: responseBody.password,
-        password_changed_at: responseBody.password_changed_at,
         features: ["read:activation_token"],
-        cpf: cpf,
         phone: "91984546411",
         address: "rua tal, cidade tal, estado tal, pais tal",
         notes: null,
         avatar_url: avatarUrl,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
-        banned_at: null,
-        banned_by: null,
-        banned_reason: null,
-        deactivated_at: null,
       });
 
       expect(uuidVersion(responseBody.id)).toBe(4);
-      expect(Date.parse(responseBody.created_at)).not.toBeNaN();
-      expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
+      expect(Date.parse(String(responseBody.created_at))).not.toBeNaN();
+      expect(Date.parse(String(responseBody.updated_at))).not.toBeNaN();
 
       const userInDatabase = await user.findOneByUsername("ryangwalchmei");
       const correctPasswordMatch = await password.compare(

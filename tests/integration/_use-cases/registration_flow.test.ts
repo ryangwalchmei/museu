@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, test } from "@jest/globals";
 import webserver from "infra/webserver";
 import activation from "models/activation";
 import user from "models/user";
-import { User } from "models/user/types";
+import { User, UserSecureOutputProps } from "models/user/types";
 
 import orchestrator from "tests/orchestrator";
 
@@ -16,7 +16,7 @@ beforeAll(async () => {
 
 describe("Use case: Registration Flow", () => {
   describe("Standard flow", () => {
-    let createUserResponseBody: User;
+    let createUserResponseBody: UserSecureOutputProps;
     let activationTokenId: string;
     let tokenSessionId: string;
 
@@ -44,26 +44,19 @@ describe("Use case: Registration Flow", () => {
 
       expect(createUserResponse.status).toBe(201);
 
-      createUserResponseBody = (await createUserResponse.json()) as User;
+      createUserResponseBody =
+        (await createUserResponse.json()) as UserSecureOutputProps;
 
       expect(createUserResponseBody).toEqual({
         id: createUserResponseBody.id,
         username: "RegistrationFlow",
-        email: "registration.flow@gwalchmei.com.br",
-        password: createUserResponseBody.password,
-        password_changed_at: createUserResponseBody.password_changed_at,
         features: ["read:activation_token"],
         created_at: createUserResponseBody.created_at,
         updated_at: createUserResponseBody.updated_at,
         address: "rua tal, cidade tal, estado tal, pais tal",
         notes: null,
         avatar_url: avatarUrl,
-        cpf,
         phone: "91984546411",
-        banned_at: null,
-        banned_by: null,
-        banned_reason: null,
-        deactivated_at: null,
       });
     });
 
