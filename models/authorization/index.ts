@@ -90,6 +90,23 @@ function filterOutput(
       password_changed_at: user.password_changed_at,
     };
   }
+
+  if (feature == "read:user:self") {
+    if (user.id === resource.id) {
+      return {
+        id: resource.id,
+        username: resource.username,
+        features: resource.features,
+        created_at: resource.created_at,
+        updated_at: resource.updated_at,
+        address: resource.address,
+        avatar_url: resource.avatar_url,
+        notes: resource.notes,
+        password_changed_at: resource.password_changed_at,
+        phone: resource.phone,
+      };
+    }
+  }
 }
 
 function validateUser(user: User | (AnonymousUser & { id?: string })) {

@@ -13,7 +13,9 @@ export default createRouter<RequestWithContext, NextApiResponse>()
   .handler(controller.errorHandlers);
 
 async function getHandler(req: RequestWithContext, res: NextApiResponse) {
-  if (!authorization.can(req.context.user, "read:session")) {
+  const userTryingToGet = req.context.user;
+
+  if (!authorization.can(userTryingToGet, "read:session")) {
     throw new ForbiddenError({
       message: "Você não possui permissão para acessar esse recurso.",
       action: "Contate o suporte caso você acredite que isto seja um erro.",
@@ -31,5 +33,11 @@ async function getHandler(req: RequestWithContext, res: NextApiResponse) {
     "Cache-Control",
     "no-store, no-cache, max-age=0, must-revalidate",
   );
-  return res.status(200).json(userFound);
+
+  const secureOutputValues = authorization.filterOutput(
+    userTryingToGet,
+    "read:user:self",
+    userFound,
+  );
+  return res.status(200).json(secureOutputValues);
 }
