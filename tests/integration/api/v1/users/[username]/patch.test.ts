@@ -505,13 +505,47 @@ describe("PATCH /api/v1/users/:username", () => {
         status_code: 400,
       });
     });
+
+    test("Change other user data", async () => {
+      const { session } = await orchestrator.createAuthenticatedUser({
+        features: ["update:user"],
+      });
+
+      const otherUser = await orchestrator.createUser();
+
+      const response = await fetch(
+        `http://localhost:3000/api/v1/users/${otherUser.username}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${session.token}`,
+          },
+          body: JSON.stringify({
+            username: "otherUserToChange",
+            email: "otherUserToChange@gwalchmei.com.br",
+            password: "newpassword",
+          }),
+        },
+      );
+
+      expect(response.status).toBe(403);
+      const responseBody = await response.json();
+
+      expect(responseBody).toEqual({
+        action: 'Verifique a feature "update:user" ou "update:user:others".',
+        message: "Você não possui permissão para ler este usuário.",
+        name: "ForbiddenError",
+        status_code: 403,
+      });
+    });
   });
 
   describe("Priviliged user", () => {
     test("Change user self data", async () => {
       const { session, user: createdUser } =
         await orchestrator.createAuthenticatedUser({
-          features: ["update:user"],
+          features: ["update:user", "update:user:others"],
           username: "username",
         });
 
@@ -547,7 +581,12 @@ describe("PATCH /api/v1/users/:username", () => {
         phone: "12345678901",
         address: "Rua tal, cidade Tal",
         notes: "lorem ipsum",
-        features: ["create:session", "read:session", "update:user"],
+        features: [
+          "create:session",
+          "read:session",
+          "update:user",
+          "update:user:others",
+        ],
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
         banned_at: createdUser.banned_at,
@@ -617,7 +656,7 @@ describe("PATCH /api/v1/users/:username", () => {
         address: otherUser.address,
         notes: otherUser.notes,
         features: ["read:activation_token"],
-        created_at: otherUser.created_at.toISOString(),
+        created_at: new Date(otherUser.created_at).toISOString(),
         updated_at: responseBody.updated_at,
         avatar_url: otherUser.avatar_url,
         banned_at: otherUser.banned_at,
