@@ -3,6 +3,7 @@ import { AnonymousUser } from "infra/controller/types";
 import { InternalServerError, ValidationError } from "infra/errors";
 import { User, UserSecureOutputProps } from "models/user/types";
 import availableFeatures from "models/authorization/user-features";
+import { Migration } from "models/migrator/types";
 
 export function can(
   user: User | (AnonymousUser & { id?: string }),
@@ -150,6 +151,16 @@ function filterOutput(
       created_at: resource.created_at,
       updated_at: resource.updated_at,
     };
+  }
+
+  if (feature === "read:migrations") {
+    return resource.map((migration: Migration) => {
+      return {
+        path: migration.path,
+        name: migration.name,
+        timestamp: migration.timestamp,
+      };
+    }) as Migration[];
   }
 }
 
