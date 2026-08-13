@@ -1,9 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnonymousUser } from "infra/controller/types";
 import { InternalServerError, ValidationError } from "infra/errors";
-import { User, UserSecureOutputProps } from "models/user/types";
 import availableFeatures from "models/authorization/user-features";
 import { Migration } from "models/migrator/types";
+import {
+  CreateUserInput,
+  User,
+  UserSecureOutputProps,
+} from "models/user/types";
 
 export function can(
   user: User | (AnonymousUser & { id?: string }),
@@ -36,13 +40,33 @@ export function can(
   return false;
 }
 
-function filterInput(user: User, feature: string, input: any) {
+function filterInput(
+  user: User | AnonymousUser,
+  feature: string,
+  input: any,
+  target?: any,
+) {
   validateUser(user);
   validateFeature(feature);
   validateInput(input);
 
-  let filteredInputValues: any;
-  let cleanedInput: any;
+  let filteredInputValues: any = {};
+  const cleanedInput: any = {};
+
+  if (feature === "create:user" && can(user, feature, target)) {
+    const userInput: CreateUserInput = input;
+    filteredInputValues = {
+      username: userInput?.username,
+      email: userInput?.email,
+      password: userInput?.password,
+      cpf: userInput?.cpf,
+      phone: userInput?.phone,
+      address: userInput.address,
+      notes: userInput?.notes,
+      features: userInput?.features,
+      avatar_url: userInput?.avatar_url,
+    };
+  }
 
   for (const key in filteredInputValues) {
     if (filteredInputValues[key] !== undefined) {

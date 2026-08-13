@@ -1,10 +1,10 @@
+import controller from "infra/controller";
+import { RequestWithContext } from "infra/controller/types";
+import activation from "models/activation";
+import authorization from "models/authorization";
+import user from "models/user";
 import { NextApiResponse } from "next";
 import { createRouter } from "next-connect";
-import controller from "infra/controller";
-import user from "models/user";
-import activation from "models/activation";
-import { RequestWithContext } from "infra/controller/types";
-import authorization from "models/authorization";
 
 export default createRouter<RequestWithContext, NextApiResponse>()
   .use(controller.injectAnonymousOrUser)
@@ -19,8 +19,14 @@ async function getHandler(req: RequestWithContext, res: NextApiResponse) {
 
 async function postHandler(req: RequestWithContext, res: NextApiResponse) {
   const userTryingToPost = req.context.user;
-  const userInputValues = req.body;
-  const newUser = await user.create(userInputValues);
+  const inputInsecure = req.body;
+
+  const valuesFiltered = authorization.filterInput(
+    userTryingToPost,
+    "create:user",
+    inputInsecure,
+  );
+  const newUser = await user.create(valuesFiltered);
 
   const activationToken = await activation.create(newUser);
 

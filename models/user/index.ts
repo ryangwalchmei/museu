@@ -126,6 +126,26 @@ async function create(userInputValues: CreateUserInput) {
       action: "Forneça o campo `username` para realizar esta operação.",
     });
   }
+  if (!userInputValues.email) {
+    throw new ValidationError({
+      message: "Email não foi informado.",
+      action: "Forneça um email para realizar esta operação.",
+    });
+  }
+
+  if (!userInputValues.password) {
+    throw new ValidationError({
+      message: "Senha não foi informada.",
+      action: "Forneça uma senha para realizar esta operação.",
+    });
+  }
+
+  if (!userInputValues.address) {
+    throw new ValidationError({
+      message: "Endereço não foi informado.",
+      action: "Insira um endereço para realizar esta operação.",
+    });
+  }
 
   await validateUniqueUsername(userInputValues.username);
   await validateUniqueEmail(userInputValues.email);
@@ -153,13 +173,6 @@ async function create(userInputValues: CreateUserInput) {
         action: "Insira um CPF válido para realizar esta operação.",
       });
     }
-  }
-
-  if (!userInputValues.address) {
-    throw new ValidationError({
-      message: "Endereço não foi informado.",
-      action: "Insira um endereço para realizar esta operação.",
-    });
   }
 
   const newUser = await runInsertQuery(userInputValues);
