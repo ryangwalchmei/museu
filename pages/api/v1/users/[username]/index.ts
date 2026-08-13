@@ -38,16 +38,16 @@ async function patchHandler(
   request: RequestWithContext,
   response: NextApiResponse,
 ) {
-  const userLogged = request.context.user;
+  const userTryingToPatch = request.context.user;
   const { username } = request.query as CreateUserInputNoRequired;
   const userInputValues = request.body;
 
   const targetUser =
-    username === userLogged.username
-      ? userLogged
+    username === userTryingToPatch.username
+      ? userTryingToPatch
       : await user.findOneByUsername(username!);
 
-  if (!authorization.can(userLogged, "update:user", targetUser)) {
+  if (!authorization.can(userTryingToPatch, "update:user", targetUser)) {
     throw new ForbiddenError({
       message: "Você não possui permissão para ler este usuário.",
       action: 'Verifique a feature "update:user" ou "update:user:others".',
@@ -55,5 +55,12 @@ async function patchHandler(
   }
 
   const updatedUser = await user.update(String(username), userInputValues);
-  return response.status(200).json(updatedUser);
+
+  const secureOutputValues = authorization.filterOutput(
+    userTryingToPatch,
+    "read:user",
+    updatedUser,
+  );
+
+  return response.status(200).json(secureOutputValues);
 }
