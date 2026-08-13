@@ -32,7 +32,13 @@ async function postHandler(req: RequestWithContext, res: NextApiResponse) {
 
   await controller.setSessionCookie(newSession.token, res);
 
-  return res.status(201).json(newSession);
+  const secureOutputValues = authorization.filterOutput(
+    authenticatedUser,
+    "read:session",
+    newSession,
+  );
+
+  return res.status(201).json(secureOutputValues);
 }
 
 async function deleteHandler(req: RequestWithContext, res: NextApiResponse) {
