@@ -1,11 +1,11 @@
+import controller from "infra/controller";
+import { RequestWithContext } from "infra/controller/types";
+import { ForbiddenError } from "infra/errors";
+import authentication from "models/authentication";
+import authorization from "models/authorization";
+import session from "models/session";
 import { NextApiResponse } from "next";
 import { createRouter } from "next-connect";
-import controller from "infra/controller";
-import authentication from "models/authentication";
-import session from "models/session";
-import { RequestWithContext } from "infra/controller/types";
-import authorization from "models/authorization";
-import { ForbiddenError } from "infra/errors";
 
 export default createRouter<RequestWithContext, NextApiResponse>()
   .use(controller.injectAnonymousOrUser)
@@ -16,7 +16,7 @@ export default createRouter<RequestWithContext, NextApiResponse>()
 async function postHandler(req: RequestWithContext, res: NextApiResponse) {
   const userInputValues = req.body;
 
-  const authenticatedUser = await authentication.getAuthenticatedUser(
+  const authenticatedUser = await authentication.getUser(
     userInputValues.email,
     userInputValues.password,
   );

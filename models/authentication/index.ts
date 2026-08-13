@@ -1,9 +1,9 @@
-import user from "models/user";
-import password from "models/password";
 import { NotFoundError, UnauthorizedError } from "infra/errors";
+import password from "models/password";
+import user from "models/user";
 import { User } from "models/user/types";
 
-async function getAuthenticatedUser(
+async function getUser(
   providedEmail: User["email"],
   providedPassword: User["password"],
 ) {
@@ -61,7 +61,7 @@ async function getAuthenticatedUser(
 }
 
 const authentication = {
-  getAuthenticatedUser,
+  getUser,
 };
 
 export default authentication;
