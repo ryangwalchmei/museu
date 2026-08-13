@@ -53,4 +53,5 @@ export interface UserSecureOutputProps {
   notes: User["notes"];
   phone: User["phone"];
   avatar_url: User["avatar_url"];
+  password_changed_at: User["password_changed_at"];
 }

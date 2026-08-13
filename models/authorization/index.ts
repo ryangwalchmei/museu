@@ -87,6 +87,7 @@ function filterOutput(
       notes: user.notes,
       phone: user.phone,
       avatar_url: user.avatar_url,
+      password_changed_at: user.password_changed_at,
     };
   }
 }

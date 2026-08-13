@@ -57,6 +57,9 @@ describe("Use case: Registration Flow", () => {
         notes: null,
         avatar_url: avatarUrl,
         phone: "91984546411",
+        password_changed_at: new Date(
+          createUserResponseBody.password_changed_at,
+        ).toISOString(),
       });
     });
 

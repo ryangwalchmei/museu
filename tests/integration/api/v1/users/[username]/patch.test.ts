@@ -85,6 +85,7 @@ describe("PATCH /api/v1/users/:username", () => {
         avatar_url: createdUser.avatar_url,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
+        password_changed_at: responseBody.password_changed_at,
       });
 
       expect(responseBody.cpf != createdUser.cpf).toBe(true);
@@ -303,6 +304,7 @@ describe("PATCH /api/v1/users/:username", () => {
         notes: user.notes,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
+        password_changed_at: responseBody.password_changed_at,
         avatar_url: user.avatar_url,
       });
 
@@ -348,6 +350,9 @@ describe("PATCH /api/v1/users/:username", () => {
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
         avatar_url: createdUser.avatar_url,
+        password_changed_at: new Date(
+          createdUser.password_changed_at,
+        ).toISOString(),
       });
 
       expect(uuidVersion(responseBody.id)).toBe(4);
@@ -406,16 +411,11 @@ describe("PATCH /api/v1/users/:username", () => {
       expect(correctPasswordMatch).toBe(true);
       expect(incorrectPasswordMatch).toBe(false);
 
-      console.log({
-        createdUser_password: createdUser.password_changed_at,
-        responseBody_password: responseBody.password_changed_at,
-      });
-
       expect(responseBody.password).not.toBe(createdUser.password);
-      // expect(
-      //   Date.parse(new Date(createdUser.password_changed_at).toISOString()) <
-      //     Date.parse(responseBody.password_changed_at),
-      // ).toBe(true);
+      expect(
+        Date.parse(new Date(createdUser.password_changed_at).toISOString()) <
+          Date.parse(responseBody.password_changed_at),
+      ).toBe(true);
     });
 
     test("With duplicated `cpf`", async () => {
@@ -569,6 +569,9 @@ describe("PATCH /api/v1/users/:username", () => {
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
         avatar_url: createdUser.avatar_url,
+        password_changed_at: new Date(
+          responseBody.password_changed_at,
+        ).toISOString(),
       });
 
       expect(responseBody.cpf != createdUser.cpf).toBe(true);
@@ -630,6 +633,9 @@ describe("PATCH /api/v1/users/:username", () => {
         created_at: new Date(otherUser.created_at).toISOString(),
         updated_at: responseBody.updated_at,
         avatar_url: otherUser.avatar_url,
+        password_changed_at: new Date(
+          responseBody.password_changed_at,
+        ).toISOString(),
       });
 
       expect(responseBody.username != otherUser.username).toBe(true);

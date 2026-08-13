@@ -47,6 +47,7 @@ describe("POST /api/v1/users", () => {
         avatar_url: avatarUrl,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
+        password_changed_at: responseBody.password_changed_at,
       });
 
       expect(uuidVersion(responseBody.id)).toBe(4);
