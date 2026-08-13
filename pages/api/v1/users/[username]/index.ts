@@ -1,11 +1,11 @@
-import { createRouter } from "next-connect";
 import controller from "infra/controller";
-import user from "models/user";
-import { NextApiResponse } from "next";
 import { RequestWithContext } from "infra/controller/types";
-import { CreateUserInputNoRequired } from "models/user/types";
-import authorization from "models/authorization";
 import { ForbiddenError } from "infra/errors";
+import authorization from "models/authorization";
+import user from "models/user";
+import { CreateUserInputNoRequired } from "models/user/types";
+import { NextApiResponse } from "next";
+import { createRouter } from "next-connect";
 
 export default createRouter<RequestWithContext, NextApiResponse>()
   .use(controller.injectAnonymousOrUser)
@@ -45,7 +45,7 @@ async function patchHandler(
 ) {
   const userTryingToPatch = request.context.user;
   const { username } = request.query as CreateUserInputNoRequired;
-  const userInputValues = request.body;
+  const inputInsecure = request.body;
 
   const targetUser =
     username === userTryingToPatch.username
@@ -59,7 +59,14 @@ async function patchHandler(
     });
   }
 
-  const updatedUser = await user.update(String(username), userInputValues);
+  const valuesFiltered = authorization.filterInput(
+    userTryingToPatch,
+    "update:user",
+    inputInsecure,
+    targetUser,
+  );
+
+  const updatedUser = await user.update(String(username), valuesFiltered);
 
   const secureOutputValues = authorization.filterOutput(
     userTryingToPatch,

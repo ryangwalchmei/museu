@@ -68,6 +68,32 @@ function filterInput(
     };
   }
 
+  if (feature === "update:user" && can(user, feature, target)) {
+    const userInput: CreateUserInput = input;
+    filteredInputValues = {
+      username: userInput?.username,
+      email: userInput?.email,
+      password: userInput?.password,
+      phone: userInput?.phone,
+      address: userInput.address,
+      avatar_url: userInput?.avatar_url,
+    };
+
+    if (can(user, "update:user:others")) {
+      filteredInputValues = {
+        username: userInput?.username,
+        email: userInput?.email,
+        password: userInput?.password,
+        cpf: userInput?.cpf,
+        phone: userInput?.phone,
+        address: userInput.address,
+        notes: userInput?.notes,
+        features: userInput?.features,
+        avatar_url: userInput?.avatar_url,
+      };
+    }
+  }
+
   for (const key in filteredInputValues) {
     if (filteredInputValues[key] !== undefined) {
       cleanedInput[key] = filteredInputValues[key];
@@ -84,8 +110,8 @@ function filterInput(
 
     if (!input || countInputFields === 0) {
       throw new ValidationError({
-        message: `Nenhum "input" foi especificado para a ação de filtro.`,
-        action: `Contate o suporte informando o campo "errorId".`,
+        message: "Nenhum dado foi enviado para atualização.",
+        action: "Preencha os campos requeridos e tente novamente.",
       });
     }
   }

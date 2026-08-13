@@ -418,6 +418,46 @@ describe("POST /api/v1/users", () => {
         status_code: 400,
       });
     });
+
+    test("With invalid property", async () => {
+      const cpf = orchestrator.cpf.generate(false);
+      const avatarUrl = faker.image.avatar();
+      const response = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: "invalidproperty",
+          email: "invalidproperty@gwalchmei.com.br",
+          password: "invalidproperty",
+          cpf,
+          address: "rua tal, cidade tal, estado tal, pais tal",
+          phone: "91984546411",
+          avatar_url: avatarUrl,
+          invalidproperty: "invalidproperty",
+        }),
+      });
+
+      expect(response.status).toBe(201);
+      const responseBody: UserSecureOutputProps = await response.json();
+
+      expect(responseBody).toEqual({
+        id: responseBody.id,
+        username: "invalidproperty",
+        features: ["read:activation_token"],
+        phone: "91984546411",
+        address: "rua tal, cidade tal, estado tal, pais tal",
+        notes: null,
+        avatar_url: avatarUrl,
+        created_at: responseBody.created_at,
+        updated_at: responseBody.updated_at,
+        password_changed_at: responseBody.password_changed_at,
+      });
+
+      //@ts-expect-error this test require a property non existent
+      expect(responseBody.invalidproperty).not.toBeDefined();
+    });
   });
 
   describe("Default user", () => {

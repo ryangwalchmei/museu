@@ -1,10 +1,10 @@
-import { beforeAll, describe, expect, test } from "@jest/globals";
-import { version as uuidVersion } from "uuid";
-import orchestrator from "tests/orchestrator/";
-import user from "models/user";
-import password from "models/password";
-import { cpf } from "cpf-cnpj-validator";
 import { faker, fakerPT_BR } from "@faker-js/faker";
+import { beforeAll, describe, expect, test } from "@jest/globals";
+import { cpf } from "cpf-cnpj-validator";
+import password from "models/password";
+import user from "models/user";
+import orchestrator from "tests/orchestrator/";
+import { version as uuidVersion } from "uuid";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -14,7 +14,7 @@ beforeAll(async () => {
 
 describe("PATCH /api/v1/users/:username", () => {
   describe("Anonymous user", () => {
-    test("Change any user's data", async () => {
+    test("Trying change any user's data", async () => {
       const createdUser = await orchestrator.createUser();
       const response = await fetch(
         `http://localhost:3000/api/v1/users/${createdUser.username}`,
@@ -65,10 +65,8 @@ describe("PATCH /api/v1/users/:username", () => {
             username: "newusername",
             email: "newemail@gwalchmei.com.br",
             password: "newpassword",
-            cpf: cpf.generate(),
             phone,
             address: "Rua tal, cidade Tal",
-            notes: "lorem ipsum",
           }),
         },
       );
@@ -80,7 +78,7 @@ describe("PATCH /api/v1/users/:username", () => {
         username: "newusername",
         phone: phone,
         address: "Rua tal, cidade Tal",
-        notes: "lorem ipsum",
+        notes: null,
         features: ["create:session", "read:session", "update:user"],
         avatar_url: createdUser.avatar_url,
         created_at: responseBody.created_at,
@@ -135,7 +133,7 @@ describe("PATCH /api/v1/users/:username", () => {
       expect(responseBody).toEqual({
         name: "ValidationError",
         message: "Nenhum dado foi enviado para atualização.",
-        action: "Envie pelo menos um dado para atualizar o usuário.",
+        action: "Preencha os campos requeridos e tente novamente.",
         status_code: 400,
       });
     });
@@ -418,76 +416,6 @@ describe("PATCH /api/v1/users/:username", () => {
       ).toBe(true);
     });
 
-    test("With duplicated `cpf`", async () => {
-      const { session, user: createdUser1 } =
-        await orchestrator.createAuthenticatedUser({
-          cpf: cpf.generate(),
-          features: ["update:user"],
-        });
-
-      const createdUser2 = await orchestrator.createUser({
-        cpf: cpf.generate(),
-      });
-
-      const response = await fetch(
-        `http://localhost:3000/api/v1/users/${createdUser1.username}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Cookie: `session_id=${session.token}`,
-          },
-          body: JSON.stringify({
-            cpf: createdUser2.cpf,
-          }),
-        },
-      );
-
-      expect(response.status).toBe(400);
-
-      const responseBody = await response.json();
-
-      expect(responseBody).toEqual({
-        name: "ValidationError",
-        action: "Utilize outro CPF para realizar esta operação.",
-        message: "O CPF informado já está sendo utilizado.",
-        status_code: 400,
-      });
-    });
-
-    test("With invalid `cpf`", async () => {
-      const { session, user: createdUser } =
-        await orchestrator.createAuthenticatedUser({
-          cpf: cpf.generate(),
-          features: ["update:user"],
-        });
-
-      const response = await fetch(
-        `http://localhost:3000/api/v1/users/${createdUser.username}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Cookie: `session_id=${session.token}`,
-          },
-          body: JSON.stringify({
-            cpf: "123.456.789-00",
-          }),
-        },
-      );
-
-      expect(response.status).toBe(400);
-
-      const responseBody = await response.json();
-
-      expect(responseBody).toEqual({
-        name: "ValidationError",
-        action: "Insira um CPF válido para realizar esta operação.",
-        message: "O CPF informado é inválido.",
-        status_code: 400,
-      });
-    });
-
     test("Change other user data", async () => {
       const { session } = await orchestrator.createAuthenticatedUser({
         features: ["update:user"],
@@ -521,6 +449,42 @@ describe("PATCH /api/v1/users/:username", () => {
         status_code: 403,
       });
     });
+
+    test("With disallowed field", async () => {
+      const { session, user: createdUser } =
+        await orchestrator.createAuthenticatedUser({
+          cpf: cpf.generate(),
+          features: ["update:user"],
+        });
+
+      const response = await fetch(
+        `http://localhost:3000/api/v1/users/${createdUser.username}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${session.token}`,
+          },
+          body: JSON.stringify({
+            cpf: "123.456.789-00",
+          }),
+        },
+      );
+
+      expect(response.status).toBe(400);
+
+      const responseBody = await response.json();
+
+      expect(responseBody).toEqual({
+        name: "ValidationError",
+        message: "Nenhum dado foi enviado para atualização.",
+        action: "Envie pelo menos um dado para atualizar o usuário.",
+        status_code: 400,
+      });
+
+      const userInDatabase = await user.findOneByUsername(createdUser.username);
+      expect(userInDatabase.cpf === createdUser.cpf);
+    });
   });
 
   describe("Priviliged user", () => {
@@ -530,7 +494,7 @@ describe("PATCH /api/v1/users/:username", () => {
           features: ["update:user", "update:user:others"],
           username: "username",
         });
-
+      const newCpf = cpf.generate(false);
       const response = await fetch(
         `http://localhost:3000/api/v1/users/${createdUser.username}`,
         {
@@ -543,7 +507,7 @@ describe("PATCH /api/v1/users/:username", () => {
             username: "newusernameupdated",
             email: "newemailUserAdmin@gwalchmei.com.br",
             password: "newpassword",
-            cpf: cpf.generate(false),
+            cpf: newCpf,
             phone: "12345678901",
             address: "Rua tal, cidade Tal",
             notes: "lorem ipsum",
@@ -595,15 +559,92 @@ describe("PATCH /api/v1/users/:username", () => {
 
       expect(correctPasswordMatch).toBe(true);
       expect(incorrectPasswordMatch).toBe(false);
+
+      expect(userInDatabase.cpf === createdUser.cpf).toBe(false);
+      expect(userInDatabase.cpf === newCpf).toBe(true);
+    });
+
+    test("With duplicated `cpf`", async () => {
+      const { session, user: createdUser1 } =
+        await orchestrator.createAuthenticatedUser({
+          cpf: cpf.generate(),
+          features: ["update:user", "update:user:others"],
+        });
+
+      const createdUser2 = await orchestrator.createUser({
+        cpf: cpf.generate(),
+      });
+
+      const response = await fetch(
+        `http://localhost:3000/api/v1/users/${createdUser1.username}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${session.token}`,
+          },
+          body: JSON.stringify({
+            cpf: createdUser2.cpf,
+          }),
+        },
+      );
+
+      expect(response.status).toBe(400);
+
+      const responseBody = await response.json();
+
+      expect(responseBody).toEqual({
+        name: "ValidationError",
+        action: "Utilize outro CPF para realizar esta operação.",
+        message: "O CPF informado já está sendo utilizado.",
+        status_code: 400,
+      });
+    });
+
+    test("With invalid `cpf`", async () => {
+      const { session, user: createdUser } =
+        await orchestrator.createAuthenticatedUser({
+          cpf: cpf.generate(),
+          features: ["update:user", "update:user:others"],
+        });
+
+      const response = await fetch(
+        `http://localhost:3000/api/v1/users/${createdUser.username}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${session.token}`,
+          },
+          body: JSON.stringify({
+            cpf: "123.456.789-00",
+          }),
+        },
+      );
+
+      expect(response.status).toBe(400);
+
+      const responseBody = await response.json();
+
+      expect(responseBody).toEqual({
+        name: "ValidationError",
+        action: "Insira um CPF válido para realizar esta operação.",
+        message: "O CPF informado é inválido.",
+        status_code: 400,
+      });
+
+      const userInDatabase = await user.findOneByUsername(createdUser.username);
+      expect(userInDatabase.cpf == createdUser.cpf).toBe(true);
     });
 
     test("Change other user data", async () => {
-      const { session } = await orchestrator.createAuthenticatedUser({
-        features: ["update:user", "update:user:others"],
-      });
+      const { session, user: userCreated } =
+        await orchestrator.createAuthenticatedUser({
+          features: ["update:user", "update:user:others"],
+        });
 
       const otherUser = await orchestrator.createUser();
-
+      const newCPF = cpf.generate();
       const response = await fetch(
         `http://localhost:3000/api/v1/users/${otherUser.username}`,
         {
@@ -616,6 +657,7 @@ describe("PATCH /api/v1/users/:username", () => {
             username: "otherUserToChange",
             email: "otherUserToChange@gwalchmei.com.br",
             password: "newpassword",
+            cpf: newCPF,
           }),
         },
       );
@@ -649,6 +691,7 @@ describe("PATCH /api/v1/users/:username", () => {
       const userInDatabase = await user.findOneByUsername(
         responseBody.username,
       );
+
       const correctPasswordMatch = await password.compare(
         "newpassword",
         userInDatabase.password,
@@ -661,6 +704,12 @@ describe("PATCH /api/v1/users/:username", () => {
 
       expect(correctPasswordMatch).toBe(true);
       expect(incorrectPasswordMatch).toBe(false);
+      expect(
+        userInDatabase.password_changed_at > userCreated.password_changed_at,
+      ).toBe(true);
+
+      expect(userInDatabase.cpf === otherUser.cpf).toBe(false);
+      expect(userInDatabase.cpf === newCPF).toBe(true);
     });
   });
 });
