@@ -3,6 +3,7 @@ import controller from "infra/controller";
 import activation from "models/activation";
 import { NextApiResponse } from "next";
 import { RequestWithContext } from "infra/controller/types";
+import authorization from "models/authorization";
 
 export default createRouter<RequestWithContext, NextApiResponse>()
   .use(controller.injectAnonymousOrUser)
@@ -10,6 +11,7 @@ export default createRouter<RequestWithContext, NextApiResponse>()
   .handler(controller.errorHandlers);
 
 async function patchHandler(req: RequestWithContext, res: NextApiResponse) {
+  const userTryingToPatch = req.context.user;
   const { token_id } = req.query;
 
   const validActivationToken = await activation.findOneValidById(
@@ -21,5 +23,11 @@ async function patchHandler(req: RequestWithContext, res: NextApiResponse) {
     String(token_id),
   );
 
-  return res.status(200).json(usedActivationToken);
+  const secureOutputValues = authorization.filterOutput(
+    userTryingToPatch,
+    "read:activation_token",
+    usedActivationToken,
+  );
+
+  return res.status(200).json(secureOutputValues);
 }

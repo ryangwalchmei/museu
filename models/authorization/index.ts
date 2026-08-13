@@ -140,6 +140,17 @@ function filterOutput(
       };
     }
   }
+
+  if (feature === "read:activation_token") {
+    return {
+      id: resource.id,
+      use_at: resource.use_at,
+      user_id: resource.user_id,
+      expires_at: resource.expires_at,
+      created_at: resource.created_at,
+      updated_at: resource.updated_at,
+    };
+  }
 }
 
 function validateUser(user: User | (AnonymousUser & { id?: string })) {
