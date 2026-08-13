@@ -1,11 +1,11 @@
-import { beforeAll, describe, expect, test } from "@jest/globals";
-import { version as uuidVersion } from "uuid";
-import orchestrator from "tests/orchestrator";
-import user from "models/user";
-import password from "models/password";
 import { faker } from "@faker-js/faker";
+import { beforeAll, describe, expect, test } from "@jest/globals";
 import { cpf } from "cpf-cnpj-validator";
+import password from "models/password";
+import user from "models/user";
 import { UserSecureOutputProps } from "models/user/types";
+import orchestrator from "tests/orchestrator";
+import { version as uuidVersion } from "uuid";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -96,6 +96,7 @@ describe("POST /api/v1/users", () => {
         body: JSON.stringify({
           username: "emailduplicado2",
           email: "Duplicado@gwalchmei.com.br",
+          address: "rua tal, cidade tal, estado tal, pais tal",
           password: "senha123",
         }),
       });
@@ -185,6 +186,86 @@ describe("POST /api/v1/users", () => {
       });
     });
 
+    test("Without `username`", async () => {
+      const cpf = orchestrator.cpf.generate(false);
+      const response = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: "emailvalid@gwalchmei.com.br",
+          password: "senha123",
+          address: "rua tal, cidade tal, estado tal, pais tal",
+          cpf,
+        }),
+      });
+
+      expect(response.status).toBe(400);
+
+      const responseBody = await response.json();
+      expect(responseBody).toEqual({
+        name: "ValidationError",
+        message: "`username` não foi informado.",
+        action: "Forneça o campo `username` para realizar esta operação.",
+        status_code: 400,
+      });
+    });
+
+    test("Without `email`", async () => {
+      const cpf = orchestrator.cpf.generate(false);
+      const response = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: "usernamevalid",
+          password: "senha123",
+          address: "rua tal, cidade tal, estado tal, pais tal",
+          phone: "91984546411",
+          cpf,
+        }),
+      });
+
+      expect(response.status).toBe(400);
+
+      const responseBody = await response.json();
+      expect(responseBody).toEqual({
+        name: "ValidationError",
+        message: "Email não foi informado.",
+        action: "Forneça um email para realizar esta operação.",
+        status_code: 400,
+      });
+    });
+
+    test("Without `password`", async () => {
+      const cpf = orchestrator.cpf.generate(false);
+      const response = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: "usernamevalid",
+          email: "usernameduplicado1@gwalchmei.com.br",
+          address: "rua tal, cidade tal, estado tal, pais tal",
+          phone: "91984546411",
+          cpf,
+        }),
+      });
+
+      expect(response.status).toBe(400);
+
+      const responseBody = await response.json();
+      expect(responseBody).toEqual({
+        name: "ValidationError",
+        message: "Senha não foi informada.",
+        action: "Forneça uma senha para realizar esta operação.",
+        status_code: 400,
+      });
+    });
+
     test("Without `CPF`", async () => {
       const response = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",
@@ -196,7 +277,6 @@ describe("POST /api/v1/users", () => {
           email: "emailvalid@gwalchmei.com.br",
           password: "senha123",
           address: "rua tal, cidade tal, estado tal, pais tal",
-          phone: "91984546411",
         }),
       });
 
@@ -207,6 +287,33 @@ describe("POST /api/v1/users", () => {
         name: "ValidationError",
         message: "CPF não foi informado ou inválido.",
         action: "Insira um CPF válido para realizar esta operação.",
+        status_code: 400,
+      });
+    });
+
+    test("Without `address`", async () => {
+      const cpf = orchestrator.cpf.generate(false);
+      const response = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: "usernamevalid",
+          email: "emailvalid@gwalchmei.com.br",
+          password: "senha123",
+          phone: "91984546411",
+          cpf,
+        }),
+      });
+
+      expect(response.status).toBe(400);
+
+      const responseBody = await response.json();
+      expect(responseBody).toEqual({
+        name: "ValidationError",
+        message: "Endereço não foi informado.",
+        action: "Insira um endereço para realizar esta operação.",
         status_code: 400,
       });
     });

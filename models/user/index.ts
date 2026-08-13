@@ -1,7 +1,7 @@
-import database from "infra/database";
-import password from "models/password";
 import { cpfValidator } from "cpf-cnpj-validator";
+import database from "infra/database";
 import { NotFoundError, ValidationError } from "infra/errors";
+import password from "models/password";
 
 import { CreateUserInput, User } from "./types";
 
@@ -120,6 +120,13 @@ async function findOneByEmail(email: CreateUserInput["email"]) {
 }
 
 async function create(userInputValues: CreateUserInput) {
+  if (!userInputValues.username) {
+    throw new ValidationError({
+      message: "`username` não foi informado.",
+      action: "Forneça o campo `username` para realizar esta operação.",
+    });
+  }
+
   await validateUniqueUsername(userInputValues.username);
   await validateUniqueEmail(userInputValues.email);
   await validateUniqueCpf(userInputValues.cpf);
