@@ -11,6 +11,22 @@ beforeAll(async () => {
 });
 
 describe("GET /api/v1/user", () => {
+  describe("Anonymous user", () => {
+    test("Retrieving the endpoint", async () => {
+      const response = await fetch("http://localhost:3000/api/v1/user");
+
+      expect(response.status).toBe(403);
+
+      const responseBody = await response.json();
+      expect(responseBody).toEqual({
+        name: "ForbiddenError",
+        message: "Você não possui permissão para executar essa ação",
+        action: 'Verifique se seu usuário possui a feature "read:session".',
+        status_code: 403,
+      });
+    });
+  });
+
   describe("Default user", () => {
     test("With valid session", async () => {
       const { session: sessionObject, user } =
@@ -34,20 +50,13 @@ describe("GET /api/v1/user", () => {
       expect(responseBody).toEqual({
         id: user.id,
         username: user.username,
-        email: user.email,
-        password: user.password,
-        features: user.features,
-        cpf: user.cpf,
+        features: ["create:session", "read:session"],
         phone: user.phone,
         address: user.address,
         notes: user.notes,
-        created_at: user.created_at.toISOString(),
+        created_at: new Date(user.created_at).toISOString(),
         updated_at: user.updated_at.toISOString(),
         avatar_url: user.avatar_url,
-        banned_at: user.banned_at,
-        banned_by: user.banned_by,
-        banned_reason: user.banned_reason,
-        deactivated_at: user.deactivated_at,
         password_changed_at: new Date(user.password_changed_at).toISOString(),
       });
 
@@ -104,20 +113,13 @@ describe("GET /api/v1/user", () => {
       expect(responseBody).toEqual({
         id: user.id,
         username: user.username,
-        email: user.email,
-        password: user.password,
-        features: user.features,
-        cpf: user.cpf,
+        features: ["create:session", "read:session"],
         phone: user.phone,
         address: user.address,
         notes: user.notes,
-        created_at: user.created_at.toISOString(),
+        created_at: new Date(user.created_at).toISOString(),
         updated_at: user.updated_at.toISOString(),
         avatar_url: user.avatar_url,
-        banned_at: user.banned_at,
-        banned_by: user.banned_by,
-        banned_reason: user.banned_reason,
-        deactivated_at: user.deactivated_at,
         password_changed_at: new Date(user.password_changed_at).toISOString(),
       });
 

@@ -8,7 +8,10 @@ import {
   ValidationError,
 } from "infra/errors";
 import session from "models/session";
+import user from "models/user";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { RequestWithContext } from "./types";
+import authorization from "models/authorization";
 
 function onNoMatchHandler(
   _request: NextApiRequest,
@@ -76,6 +79,61 @@ async function clearSessionCookie(response: NextApiResponse) {
   return response.setHeader("Set-Cookie", setCookie);
 }
 
+async function injectAnonymousOrUser(
+  request: RequestWithContext,
+  response: NextApiResponse,
+  next: () => void,
+) {
+  if (request.cookies?.session_id) {
+    await injectAuthenticatedUser(request);
+    return next();
+  }
+
+  await injectAnonymousUser(request);
+  return next();
+
+  async function injectAuthenticatedUser(request: RequestWithContext) {
+    const sessionToken = request.cookies.session_id;
+    const sessionObject = await session.findOneValidByToken(sessionToken);
+    const userObject = await user.findOneById(sessionObject.user_id);
+
+    request.context = {
+      ...request.context,
+      user: userObject,
+    };
+  }
+
+  async function injectAnonymousUser(request: RequestWithContext) {
+    const anonymousUserObject = {
+      features: ["read:activation_token", "create:session", "create:user"],
+    };
+
+    request.context = {
+      ...request.context,
+      user: anonymousUserObject,
+    };
+  }
+}
+
+function canRequest(feature: string) {
+  return function canRequestMiddleware(
+    request: RequestWithContext,
+    response: NextApiResponse,
+    next: () => void,
+  ) {
+    const userTryingToRequest = request.context.user;
+
+    if (authorization.can(userTryingToRequest, feature)) {
+      return next();
+    }
+
+    throw new ForbiddenError({
+      message: "Você não possui permissão para executar essa ação",
+      action: `Verifique se seu usuário possui a feature "${feature}".`,
+    });
+  };
+}
+
 const controller = {
   errorHandlers: {
     onNoMatch: onNoMatchHandler,
@@ -83,6 +141,8 @@ const controller = {
   },
   setSessionCookie,
   clearSessionCookie,
+  injectAnonymousOrUser,
+  canRequest,
 };
 
 export default controller;

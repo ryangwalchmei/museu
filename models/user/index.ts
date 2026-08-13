@@ -1,7 +1,7 @@
-import database from "infra/database";
-import password from "models/password";
 import { cpfValidator } from "cpf-cnpj-validator";
+import database from "infra/database";
 import { NotFoundError, ValidationError } from "infra/errors";
+import password from "models/password";
 
 import { CreateUserInput, User } from "./types";
 
@@ -53,7 +53,7 @@ async function findOneById(id: string) {
       });
     }
 
-    return results.rows[0];
+    return results.rows[0] as User;
   }
 }
 
@@ -84,7 +84,7 @@ async function findOneByUsername(username: CreateUserInput["username"]) {
       });
     }
 
-    return results.rows[0];
+    return results.rows[0] as User;
   }
 }
 
@@ -120,6 +120,33 @@ async function findOneByEmail(email: CreateUserInput["email"]) {
 }
 
 async function create(userInputValues: CreateUserInput) {
+  if (!userInputValues.username) {
+    throw new ValidationError({
+      message: "`username` não foi informado.",
+      action: "Forneça o campo `username` para realizar esta operação.",
+    });
+  }
+  if (!userInputValues.email) {
+    throw new ValidationError({
+      message: "Email não foi informado.",
+      action: "Forneça um email para realizar esta operação.",
+    });
+  }
+
+  if (!userInputValues.password) {
+    throw new ValidationError({
+      message: "Senha não foi informada.",
+      action: "Forneça uma senha para realizar esta operação.",
+    });
+  }
+
+  if (!userInputValues.address) {
+    throw new ValidationError({
+      message: "Endereço não foi informado.",
+      action: "Insira um endereço para realizar esta operação.",
+    });
+  }
+
   await validateUniqueUsername(userInputValues.username);
   await validateUniqueEmail(userInputValues.email);
   await validateUniqueCpf(userInputValues.cpf);
@@ -146,13 +173,6 @@ async function create(userInputValues: CreateUserInput) {
         action: "Insira um CPF válido para realizar esta operação.",
       });
     }
-  }
-
-  if (!userInputValues.address) {
-    throw new ValidationError({
-      message: "Endereço não foi informado.",
-      action: "Insira um endereço para realizar esta operação.",
-    });
   }
 
   const newUser = await runInsertQuery(userInputValues);
@@ -356,6 +376,55 @@ async function update(
   }
 }
 
+async function setFeatures(userId: string, features: string[]) {
+  const updatedUser = await runUpdateQuery(userId, features);
+  return updatedUser;
+
+  async function runUpdateQuery(userId: string, features: string[]) {
+    const results = await database.query({
+      text: `
+        UPDATE
+          users
+        SET
+          features = $2,
+          updated_at = timezone('utc', now())
+        WHERE
+          id = $1
+        RETURNING
+          *
+      ;`,
+      values: [userId, features],
+    });
+
+    return results.rows[0] as User;
+  }
+}
+
+async function addFeatures(userId: string, features: string[]) {
+  const currentUser = await findOneById(userId);
+  const updatedUser = await runUpdateQuery(currentUser.id, features);
+  return updatedUser;
+
+  async function runUpdateQuery(userId: string, features: string[]) {
+    const results = await database.query({
+      text: `
+        UPDATE
+          users
+        SET
+          features = array_cat(features, $2),
+          updated_at = timezone('utc', now())
+        WHERE
+          id = $1
+        RETURNING
+          *
+      ;`,
+      values: [userId, features],
+    });
+
+    return results.rows[0] as User;
+  }
+}
+
 const user = {
   create,
   findOneById,
@@ -363,6 +432,8 @@ const user = {
   findOneByEmail,
   listAll,
   update,
+  setFeatures,
+  addFeatures,
 };
 
 export default user;
