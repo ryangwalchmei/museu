@@ -1,13 +1,17 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 import database from "infra/database";
 import { createRouter } from "next-connect";
 import controller from "infra/controller";
+import { RequestWithContext } from "infra/controller/types";
+import authorization from "models/authorization";
 
-export default createRouter<NextApiRequest, NextApiResponse>()
+export default createRouter<RequestWithContext, NextApiResponse>()
+  .use(controller.injectAnonymousOrUser)
   .get(getHandler)
   .handler(controller.errorHandlers);
 
-async function getHandler(req: NextApiRequest, res: NextApiResponse) {
+async function getHandler(req: RequestWithContext, res: NextApiResponse) {
+  const userTryingToGet = req.context.user;
   const updatedAt = new Date().toISOString();
 
   const databaseVersionResult = await database.query("SHOW server_version;");
@@ -38,5 +42,11 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
     },
   };
 
-  return res.status(200).json(statusObject);
+  const secureOutputValues = authorization.filterOutput(
+    userTryingToGet,
+    "read:status:all",
+    statusObject,
+  );
+
+  return res.status(200).json(secureOutputValues);
 }

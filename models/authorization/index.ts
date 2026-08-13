@@ -107,6 +107,26 @@ function filterOutput(
       };
     }
   }
+
+  if (feature == "read:status:all") {
+    const values = {
+      updated_at: resource.updated_at,
+      dependencies: {
+        database: {
+          max_connections: resource.dependencies.database.max_connections,
+          opened_connections: resource.dependencies.database.opened_connections,
+          version: undefined,
+        },
+      },
+    };
+
+    if (can(user, feature)) {
+      values.dependencies.database.version =
+        resource.dependencies.database.version;
+    }
+
+    return values;
+  }
 }
 
 function validateUser(user: User | (AnonymousUser & { id?: string })) {

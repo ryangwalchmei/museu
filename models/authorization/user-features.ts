@@ -13,6 +13,9 @@ const availableFeatures = new Set([
   // SESSION
   "create:session",
   "read:session",
+
+  //ADM
+  "read:status:all",
 ]);
 
 export default Object.freeze(availableFeatures);
