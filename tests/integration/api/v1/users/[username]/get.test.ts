@@ -54,21 +54,14 @@ describe("GET /api/v1/users/:username", () => {
       expect(responseBody).toEqual({
         id: responseBody.id,
         username: user.username,
-        email: user.email,
-        password: responseBody.password,
         password_changed_at: responseBody.password_changed_at,
         features: user.features,
-        cpf: user.cpf,
         phone: user.phone,
         address: user.address,
         notes: user.notes,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
         avatar_url: user.avatar_url,
-        banned_at: user.banned_at,
-        banned_by: user.banned_by,
-        banned_reason: user.banned_reason,
-        deactivated_at: user.deactivated_at,
       });
 
       expect(uuidVersion(responseBody.id)).toBe(4);
@@ -125,12 +118,16 @@ describe("GET /api/v1/users/:username", () => {
 
       const responseBody = await response.json();
       expect(responseBody).toEqual({
-        ...otherUser,
-        created_at: new Date(responseBody.created_at).toISOString(),
-        password_changed_at: new Date(
-          responseBody.password_changed_at,
-        ).toISOString(),
-        updated_at: new Date(responseBody.updated_at).toISOString(),
+        id: responseBody.id,
+        username: otherUser.username,
+        password_changed_at: responseBody.password_changed_at,
+        features: otherUser.features,
+        phone: otherUser.phone,
+        address: otherUser.address,
+        notes: otherUser.notes,
+        created_at: responseBody.created_at,
+        updated_at: responseBody.updated_at,
+        avatar_url: otherUser.avatar_url,
       });
     });
 
@@ -153,8 +150,6 @@ describe("GET /api/v1/users/:username", () => {
       expect(responseBody).toEqual({
         id: responseBody.id,
         username: user.username,
-        email: user.email,
-        password: responseBody.password,
         password_changed_at: new Date(user.password_changed_at).toISOString(),
         features: [
           "create:session",
@@ -163,11 +158,6 @@ describe("GET /api/v1/users/:username", () => {
           "read:user:others",
         ],
         avatar_url: user.avatar_url,
-        banned_at: user.banned_at,
-        banned_by: user.banned_by,
-        banned_reason: user.banned_reason,
-        deactivated_at: user.deactivated_at,
-        cpf: user.cpf,
         phone: user.phone,
         address: user.address,
         notes: user.notes,
@@ -199,8 +189,6 @@ describe("GET /api/v1/users/:username", () => {
       expect(responseBody).toEqual({
         id: responseBody.id,
         username: user.username,
-        email: user.email,
-        password: responseBody.password,
         password_changed_at: new Date(user.password_changed_at).toISOString(),
         features: [
           "create:session",
@@ -209,11 +197,6 @@ describe("GET /api/v1/users/:username", () => {
           "read:user:others",
         ],
         avatar_url: user.avatar_url,
-        banned_at: user.banned_at,
-        banned_by: user.banned_by,
-        banned_reason: user.banned_reason,
-        deactivated_at: user.deactivated_at,
-        cpf: user.cpf,
         phone: user.phone,
         address: user.address,
         notes: user.notes,

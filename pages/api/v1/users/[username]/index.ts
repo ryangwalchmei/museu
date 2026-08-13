@@ -17,21 +17,26 @@ async function getHandler(
   request: RequestWithContext,
   response: NextApiResponse,
 ) {
-  const userLogged = request.context.user;
+  const userTryingToGet = request.context.user;
   const { username } = request.query as CreateUserInputNoRequired;
 
   const targetUser =
-    username === userLogged.username
-      ? userLogged
+    username === userTryingToGet.username
+      ? userTryingToGet
       : await user.findOneByUsername(username!);
 
-  if (!authorization.can(userLogged, "read:user", targetUser)) {
+  if (!authorization.can(userTryingToGet, "read:user", targetUser)) {
     throw new ForbiddenError({
       message: "Você não possui permissão para ler este usuário.",
       action: 'Verifique a feature "read:user" ou "read:user:others".',
     });
   }
-  return response.status(200).json(targetUser);
+  const secureOutputValues = authorization.filterOutput(
+    userTryingToGet,
+    "read:user",
+    targetUser,
+  );
+  return response.status(200).json(secureOutputValues);
 }
 
 async function patchHandler(
