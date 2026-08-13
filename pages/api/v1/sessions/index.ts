@@ -42,11 +42,18 @@ async function postHandler(req: RequestWithContext, res: NextApiResponse) {
 }
 
 async function deleteHandler(req: RequestWithContext, res: NextApiResponse) {
+  const userTryingToDelete = req.context.user;
   const sessionToken = req.cookies.session_id;
 
   const sessionObject = await session.findOneValidByToken(sessionToken);
   const expiredSession = await session.expireById(sessionObject.id);
   controller.clearSessionCookie(res);
 
-  return res.status(200).json(expiredSession);
+  const secureOutputValues = authorization.filterOutput(
+    userTryingToDelete,
+    "read:session",
+    expiredSession,
+  );
+
+  return res.status(200).json(secureOutputValues);
 }
