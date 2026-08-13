@@ -17,6 +17,7 @@ const availableFeatures = new Set([
   //ADM
   "read:status:all",
   "read:migrations",
+  "create:migrations",
 ]);
 
 export default Object.freeze(availableFeatures);

@@ -8,7 +8,7 @@ import { createRouter } from "next-connect";
 export default createRouter<RequestWithContext, NextApiResponse>()
   .use(controller.injectAnonymousOrUser)
   .get(controller.canRequest("read:migrations"), getHandler)
-  .post(postHandler)
+  .post(controller.canRequest("create:migrations"), postHandler)
   .handler(controller.errorHandlers);
 
 async function getHandler(req: RequestWithContext, res: NextApiResponse) {
@@ -23,11 +23,18 @@ async function getHandler(req: RequestWithContext, res: NextApiResponse) {
 }
 
 async function postHandler(req: RequestWithContext, res: NextApiResponse) {
+  const userTryingToPost = req.context.user;
   const migratedMigrations = await migrator.runPendingMigrations();
 
   if (migratedMigrations.length > 0) {
     return res.status(201).json(migratedMigrations);
   }
 
-  return res.status(200).json(migratedMigrations);
+  const secureOutputValues = authorization.filterOutput(
+    userTryingToPost,
+    "read:migrations",
+    migratedMigrations,
+  );
+
+  return res.status(200).json(secureOutputValues);
 }
