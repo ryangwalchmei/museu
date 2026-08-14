@@ -27,7 +27,6 @@
     "bcryptjs": "3.0.3",
     "cookie": "2.0.1",
     "cpf-cnpj-validator": "2.1.2",
-    "hono": "4.13.0",
     "next": "16.3.1",
     "next-connect": "1.0.0",
     "node-pg-migrate": "9.0.0",
@@ -39,8 +38,6 @@
     "uuid": "14.0.1"
   },
   "devDependencies": {
-    "dotenv": "17.4.2",
-    "dotenv-expand": "1000.0.0",
     "@commitlint/cli": "21.2.2",
     "@commitlint/config-conventional": "21.2.2",
     "@jest/globals": "30.4.1",
@@ -54,6 +51,8 @@
     "commitizen": "4.3.2",
     "concurrently": "10.0.4",
     "cz-conventional-changelog": "3.3.0",
+    "dotenv": "17.4.2",
+    "dotenv-expand": "1000.0.0",
     "eslint": "9",
     "eslint-config-next": "16.2.10",
     "husky": "9.1.7",
