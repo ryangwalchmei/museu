@@ -108,6 +108,8 @@ describe("PATCH /api/v1/users/:username", () => {
 
       expect(correctPasswordMatch).toBe(true);
       expect(incorrectPasswordMatch).toBe(false);
+
+      expect(userInDatabase.email).toBe("newemail@gwalchmei.com.br");
     });
 
     test("With body empty", async () => {
