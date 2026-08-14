@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, test } from "@jest/globals";
+import webserver from "infra/webserver";
 
 import orchestrator from "tests/orchestrator";
 
@@ -13,7 +14,7 @@ describe("Privileged user", () => {
     const createdUser1 = await orchestrator.createUser();
     const createdUser2 = await orchestrator.createUser();
 
-    const response = await fetch("http://localhost:3000/api/v1/users", {
+    const response = await fetch(`${webserver.origin}/api/v1/users`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -28,7 +29,7 @@ describe("Privileged user", () => {
 
     const users = [createdUser1, createdUser2].map((user) => ({
       ...user,
-      created_at: user.created_at.toISOString(),
+      created_at: new Date(user.created_at).toISOString(),
       updated_at: user.updated_at.toISOString(),
       password_changed_at: user.password_changed_at.toISOString(),
     }));

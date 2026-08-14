@@ -154,7 +154,7 @@ describe("PATCH /activations/[token_id]", () => {
       const activationToken = await activation.create(createdUser);
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/activations/${activationToken.id}`,
+        `${webserver.origin}/api/v1/activations/${activationToken.id}`,
         {
           method: "PATCH",
         },

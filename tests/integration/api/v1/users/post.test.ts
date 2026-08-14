@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { beforeAll, describe, expect, test } from "@jest/globals";
 import { cpf } from "cpf-cnpj-validator";
+import webserver from "infra/webserver";
 import password from "models/password";
 import user from "models/user";
 import { UserSecureOutputProps } from "models/user/types";
@@ -18,7 +19,7 @@ describe("POST /api/v1/users", () => {
     test("With unique and valid data", async () => {
       const cpf = orchestrator.cpf.generate(false);
       const avatarUrl = faker.image.avatar();
-      const response = await fetch("http://localhost:3000/api/v1/users", {
+      const response = await fetch(`${webserver.origin}/api/v1/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,7 +72,7 @@ describe("POST /api/v1/users", () => {
 
     test("With duplicated `email`", async () => {
       const cpf = orchestrator.cpf.generate(false);
-      const response1 = await fetch("http://localhost:3000/api/v1/users", {
+      const response1 = await fetch(`${webserver.origin}/api/v1/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -88,7 +89,7 @@ describe("POST /api/v1/users", () => {
 
       expect(response1.status).toBe(201);
 
-      const response2 = await fetch("http://localhost:3000/api/v1/users", {
+      const response2 = await fetch(`${webserver.origin}/api/v1/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -115,7 +116,7 @@ describe("POST /api/v1/users", () => {
 
     test("With duplicated `username`", async () => {
       const cpf = orchestrator.cpf.generate(false);
-      const response1 = await fetch("http://localhost:3000/api/v1/users", {
+      const response1 = await fetch(`${webserver.origin}/api/v1/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -132,7 +133,7 @@ describe("POST /api/v1/users", () => {
 
       expect(response1.status).toBe(201);
 
-      const response2 = await fetch("http://localhost:3000/api/v1/users", {
+      const response2 = await fetch(`${webserver.origin}/api/v1/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -160,7 +161,7 @@ describe("POST /api/v1/users", () => {
     });
 
     test("With invalid `username`", async () => {
-      const response = await fetch("http://localhost:3000/api/v1/users", {
+      const response = await fetch(`${webserver.origin}/api/v1/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -188,7 +189,7 @@ describe("POST /api/v1/users", () => {
 
     test("Without `username`", async () => {
       const cpf = orchestrator.cpf.generate(false);
-      const response = await fetch("http://localhost:3000/api/v1/users", {
+      const response = await fetch(`${webserver.origin}/api/v1/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -214,7 +215,7 @@ describe("POST /api/v1/users", () => {
 
     test("Without `email`", async () => {
       const cpf = orchestrator.cpf.generate(false);
-      const response = await fetch("http://localhost:3000/api/v1/users", {
+      const response = await fetch(`${webserver.origin}/api/v1/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -241,7 +242,7 @@ describe("POST /api/v1/users", () => {
 
     test("Without `password`", async () => {
       const cpf = orchestrator.cpf.generate(false);
-      const response = await fetch("http://localhost:3000/api/v1/users", {
+      const response = await fetch(`${webserver.origin}/api/v1/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -267,7 +268,7 @@ describe("POST /api/v1/users", () => {
     });
 
     test("Without `CPF`", async () => {
-      const response = await fetch("http://localhost:3000/api/v1/users", {
+      const response = await fetch(`${webserver.origin}/api/v1/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -293,7 +294,7 @@ describe("POST /api/v1/users", () => {
 
     test("Without `address`", async () => {
       const cpf = orchestrator.cpf.generate(false);
-      const response = await fetch("http://localhost:3000/api/v1/users", {
+      const response = await fetch(`${webserver.origin}/api/v1/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -320,7 +321,7 @@ describe("POST /api/v1/users", () => {
 
     test("With duplicated `CPF`", async () => {
       const cpfDuplicated = orchestrator.cpf.generate(false);
-      const response1 = await fetch("http://localhost:3000/api/v1/users", {
+      const response1 = await fetch(`${webserver.origin}/api/v1/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -337,7 +338,7 @@ describe("POST /api/v1/users", () => {
 
       expect(response1.status).toBe(201);
 
-      const response2 = await fetch("http://localhost:3000/api/v1/users", {
+      const response2 = await fetch(`${webserver.origin}/api/v1/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -365,7 +366,7 @@ describe("POST /api/v1/users", () => {
     });
 
     test("With invalid `CPF`", async () => {
-      const response = await fetch("http://localhost:3000/api/v1/users", {
+      const response = await fetch(`${webserver.origin}/api/v1/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -393,7 +394,7 @@ describe("POST /api/v1/users", () => {
 
     test("Without `address`", async () => {
       const cpf = orchestrator.cpf.generate(false);
-      const response = await fetch("http://localhost:3000/api/v1/users", {
+      const response = await fetch(`${webserver.origin}/api/v1/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -422,7 +423,7 @@ describe("POST /api/v1/users", () => {
     test("With invalid property", async () => {
       const cpf = orchestrator.cpf.generate(false);
       const avatarUrl = faker.image.avatar();
-      const response = await fetch("http://localhost:3000/api/v1/users", {
+      const response = await fetch(`${webserver.origin}/api/v1/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -466,7 +467,7 @@ describe("POST /api/v1/users", () => {
       await orchestrator.activateUser(userCreated);
       const sessionObject = await orchestrator.createSession(userCreated);
 
-      const response = await fetch("http://localhost:3000/api/v1/users", {
+      const response = await fetch(`${webserver.origin}/api/v1/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

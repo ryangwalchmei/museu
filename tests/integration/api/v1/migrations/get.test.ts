@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, test } from "@jest/globals";
+import webserver from "infra/webserver";
 import orchestrator from "tests/orchestrator";
 
 beforeAll(async () => {
@@ -10,7 +11,7 @@ beforeAll(async () => {
 describe("GET /api/v1/migrations", () => {
   describe("Anonymous user", () => {
     test("Should not access", async () => {
-      const response = await fetch("http://localhost:3000/api/v1/migrations", {
+      const response = await fetch(`${webserver.origin}/api/v1/migrations`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -32,7 +33,7 @@ describe("GET /api/v1/migrations", () => {
     test("Should not access", async () => {
       const { session } = await orchestrator.createAuthenticatedUser();
 
-      const response = await fetch("http://localhost:3000/api/v1/migrations", {
+      const response = await fetch(`${webserver.origin}/api/v1/migrations`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -57,7 +58,7 @@ describe("GET /api/v1/migrations", () => {
         features: ["read:migrations"],
       });
 
-      const response = await fetch("http://localhost:3000/api/v1/migrations", {
+      const response = await fetch(`${webserver.origin}/api/v1/migrations`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
