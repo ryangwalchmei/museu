@@ -7,11 +7,11 @@ import {
   UnauthorizedError,
   ValidationError,
 } from "infra/errors";
+import authorization from "models/authorization";
 import session from "models/session";
 import user from "models/user";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { RequestWithContext } from "./types";
-import authorization from "models/authorization";
 
 function onNoMatchHandler(
   _request: NextApiRequest,
@@ -49,10 +49,7 @@ function onErrorHandler(
   response.status(publicErrorObject.statusCode).json(publicErrorObject);
 }
 
-async function setSessionCookie(
-  sessionToken: string,
-  response: NextApiResponse,
-) {
+function setSessionCookie(sessionToken: string, response: NextApiResponse) {
   return response.setHeader(
     "Set-Cookie",
     cookie.stringifySetCookie({
@@ -66,7 +63,7 @@ async function setSessionCookie(
   );
 }
 
-async function clearSessionCookie(response: NextApiResponse) {
+function clearSessionCookie(response: NextApiResponse) {
   const setCookie = cookie.stringifySetCookie({
     name: "session_id",
     value: "invalid",
