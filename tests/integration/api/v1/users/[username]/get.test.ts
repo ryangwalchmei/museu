@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, test } from "@jest/globals";
-import { version as uuidVersion } from "uuid";
+import webserver from "infra/webserver";
 import orchestrator from "tests/orchestrator";
+import { version as uuidVersion } from "uuid";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -14,7 +15,7 @@ describe("GET /api/v1/users/:username", () => {
       const userCreated = await orchestrator.createUser();
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${userCreated.username}`,
+        `${webserver.origin}/api/v1/users/${userCreated.username}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -40,7 +41,7 @@ describe("GET /api/v1/users/:username", () => {
       });
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${user.username}`,
+        `${webserver.origin}/api/v1/users/${user.username}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -76,7 +77,7 @@ describe("GET /api/v1/users/:username", () => {
       const otherUser = await orchestrator.createUser();
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${otherUser.username}`,
+        `${webserver.origin}/api/v1/users/${otherUser.username}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -106,7 +107,7 @@ describe("GET /api/v1/users/:username", () => {
       const otherUser = await orchestrator.createUser();
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${otherUser.username}`,
+        `${webserver.origin}/api/v1/users/${otherUser.username}`,
         {
           headers: {
             Cookie: `session_id=${session.token}`,
@@ -137,7 +138,7 @@ describe("GET /api/v1/users/:username", () => {
       });
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${user.username}`,
+        `${webserver.origin}/api/v1/users/${user.username}`,
         {
           headers: {
             Cookie: `session_id=${session.token}`,
@@ -176,7 +177,7 @@ describe("GET /api/v1/users/:username", () => {
       });
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${user.username}`,
+        `${webserver.origin}/api/v1/users/${user.username}`,
         {
           headers: {
             Cookie: `session_id=${session.token}`,
@@ -215,7 +216,7 @@ describe("GET /api/v1/users/:username", () => {
       });
 
       const response = await fetch(
-        "http://localhost:3000/api/v1/users/nonexistent",
+        `${webserver.origin}/api/v1/users/nonexistent`,
         {
           headers: {
             Cookie: `session_id=${session.token}`,

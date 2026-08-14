@@ -1,6 +1,7 @@
 import { faker, fakerPT_BR } from "@faker-js/faker";
 import { beforeAll, describe, expect, test } from "@jest/globals";
 import { cpf } from "cpf-cnpj-validator";
+import webserver from "infra/webserver";
 import password from "models/password";
 import user from "models/user";
 import orchestrator from "tests/orchestrator/";
@@ -17,7 +18,7 @@ describe("PATCH /api/v1/users/:username", () => {
     test("Trying change any user's data", async () => {
       const createdUser = await orchestrator.createUser();
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${createdUser.username}`,
+        `${webserver.origin}/api/v1/users/${createdUser.username}`,
         {
           method: "PATCH",
           headers: {
@@ -54,7 +55,7 @@ describe("PATCH /api/v1/users/:username", () => {
 
       const phone = fakerPT_BR.phone.number({ style: "national" });
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${createdUser.username}`,
+        `${webserver.origin}/api/v1/users/${createdUser.username}`,
         {
           method: "PATCH",
           headers: {
@@ -107,6 +108,8 @@ describe("PATCH /api/v1/users/:username", () => {
 
       expect(correctPasswordMatch).toBe(true);
       expect(incorrectPasswordMatch).toBe(false);
+
+      expect(userInDatabase.email).toBe("newemail@gwalchmei.com.br");
     });
 
     test("With body empty", async () => {
@@ -115,7 +118,7 @@ describe("PATCH /api/v1/users/:username", () => {
           features: ["update:user"],
         });
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${createdUser.username}`,
+        `${webserver.origin}/api/v1/users/${createdUser.username}`,
         {
           method: "PATCH",
           headers: {
@@ -143,7 +146,7 @@ describe("PATCH /api/v1/users/:username", () => {
         features: ["update:user"],
       });
       const response = await fetch(
-        "http://localhost:3000/api/v1/users/UsuarioInexistente",
+        `${webserver.origin}/api/v1/users/UsuarioInexistente`,
         {
           method: "PATCH",
           headers: {
@@ -178,7 +181,7 @@ describe("PATCH /api/v1/users/:username", () => {
       });
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${createdUser1.username}`,
+        `${webserver.origin}/api/v1/users/${createdUser1.username}`,
         {
           method: "PATCH",
           headers: {
@@ -214,7 +217,7 @@ describe("PATCH /api/v1/users/:username", () => {
       });
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${createdUser1.username}`,
+        `${webserver.origin}/api/v1/users/${createdUser1.username}`,
         {
           method: "PATCH",
           headers: {
@@ -246,7 +249,7 @@ describe("PATCH /api/v1/users/:username", () => {
         });
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${createdUser1.username}`,
+        `${webserver.origin}/api/v1/users/${createdUser1.username}`,
         {
           method: "PATCH",
           headers: {
@@ -276,7 +279,7 @@ describe("PATCH /api/v1/users/:username", () => {
         features: ["update:user"],
       });
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${user.username}`,
+        `${webserver.origin}/api/v1/users/${user.username}`,
         {
           method: "PATCH",
           headers: {
@@ -320,7 +323,7 @@ describe("PATCH /api/v1/users/:username", () => {
         });
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${createdUser.username}`,
+        `${webserver.origin}/api/v1/users/${createdUser.username}`,
 
         {
           method: "PATCH",
@@ -371,7 +374,7 @@ describe("PATCH /api/v1/users/:username", () => {
         });
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${createdUser.username}`,
+        `${webserver.origin}/api/v1/users/${createdUser.username}`,
         {
           method: "PATCH",
           headers: {
@@ -424,7 +427,7 @@ describe("PATCH /api/v1/users/:username", () => {
       const otherUser = await orchestrator.createUser();
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${otherUser.username}`,
+        `${webserver.origin}/api/v1/users/${otherUser.username}`,
         {
           method: "PATCH",
           headers: {
@@ -458,7 +461,7 @@ describe("PATCH /api/v1/users/:username", () => {
         });
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${createdUser.username}`,
+        `${webserver.origin}/api/v1/users/${createdUser.username}`,
         {
           method: "PATCH",
           headers: {
@@ -496,7 +499,7 @@ describe("PATCH /api/v1/users/:username", () => {
         });
       const newCpf = cpf.generate(false);
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${createdUser.username}`,
+        `${webserver.origin}/api/v1/users/${createdUser.username}`,
         {
           method: "PATCH",
           headers: {
@@ -576,7 +579,7 @@ describe("PATCH /api/v1/users/:username", () => {
       });
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${createdUser1.username}`,
+        `${webserver.origin}/api/v1/users/${createdUser1.username}`,
         {
           method: "PATCH",
           headers: {
@@ -609,7 +612,7 @@ describe("PATCH /api/v1/users/:username", () => {
         });
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${createdUser.username}`,
+        `${webserver.origin}/api/v1/users/${createdUser.username}`,
         {
           method: "PATCH",
           headers: {
@@ -646,7 +649,7 @@ describe("PATCH /api/v1/users/:username", () => {
       const otherUser = await orchestrator.createUser();
       const newCPF = cpf.generate();
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${otherUser.username}`,
+        `${webserver.origin}/api/v1/users/${otherUser.username}`,
         {
           method: "PATCH",
           headers: {
