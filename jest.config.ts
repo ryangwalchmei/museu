@@ -1,5 +1,5 @@
-import type { Config } from "jest";
 import dotenv from "dotenv";
+import type { Config } from "jest";
 
 dotenv.config({ path: ".env.development" });
 
