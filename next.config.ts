@@ -1,5 +1,9 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {/* config options here */};
+const nextConfig: NextConfig = {
+  outputFileTracingIncludes: {
+    "/api/v1/migrations": ["./infra/migrations/**/*"],
+  },
+};
 
 export default nextConfig;
