@@ -94,7 +94,6 @@ export default function Login() {
           content="Acesse sua conta no Museu Flora. Um espaço para cultivar conhecimento e preservar a nossa história."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#203c32" />
       </Head>
 
       <AuthLayout>

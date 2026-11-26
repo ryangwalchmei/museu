@@ -1,4 +1,7 @@
 import Image from "next/image";
+import Head from "next/head";
+import { useTheme } from "components/theme-provider";
+import ThemeToggle from "components/theme-toggle";
 import type { ReactNode } from "react";
 import styles from "styles/login.module.css";
 
@@ -21,8 +24,13 @@ function LeafMark() {
 }
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
+  const { light, toggleTheme } = useTheme();
+
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-theme={light ? "light" : "dark"}>
+      <Head>
+        <meta name="theme-color" content={light ? "#f9f8f3" : "#10251e"} />
+      </Head>
       <a className={styles.skipLink} href="#acesso">
         Ir para o conteúdo
       </a>
@@ -68,8 +76,15 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
       </aside>
 
       <main className={styles.access} id="acesso">
-        <div className={styles.topNote}>
-          <span className={styles.statusDot} /> ESPAÇO DO MUSEU
+        <div className={styles.accessHeader}>
+          <div className={styles.topNote}>
+            <span className={styles.statusDot} /> ESPAÇO DO MUSEU
+          </div>
+          <ThemeToggle
+            light={light}
+            onToggle={toggleTheme}
+            className={styles.themeButton}
+          />
         </div>
 
         <div className={styles.formArea}>

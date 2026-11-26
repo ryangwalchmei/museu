@@ -5,11 +5,11 @@ import ConstructionJourney from "components/construction/construction-journey";
 import ConstructionEssence from "components/construction/construction-essence";
 import ConstructionFooter from "components/construction/construction-footer";
 import Head from "next/head";
-import { useState } from "react";
+import { useTheme } from "components/theme-provider";
 import styles from "styles/construction.module.css";
 
 export default function Construction() {
-  const [light, setLight] = useState(true);
+  const { light, toggleTheme } = useTheme();
 
   return (
     <>
@@ -27,10 +27,7 @@ export default function Construction() {
           Ir para o conteúdo
         </a>
         <div className={styles.ambient} aria-hidden="true" />
-        <ConstructionHeader
-          light={light}
-          onToggleTheme={() => setLight((current) => !current)}
-        />
+        <ConstructionHeader light={light} onToggleTheme={toggleTheme} />
 
         <main id="conteudo">
           <ConstructionHero />

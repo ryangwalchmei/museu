@@ -198,7 +198,6 @@ export default function ActivateRegistration() {
           content="Ative seu cadastro no Museu Flora e prepare-se para o seu primeiro acesso."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#203c32" />
         <meta name="robots" content="noindex, nofollow" />
         <meta name="referrer" content="no-referrer" />
       </Head>

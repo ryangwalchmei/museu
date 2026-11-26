@@ -1,7 +1,67 @@
 .page {
+  color: var(--auth-text, #263b32);
+  background: var(--auth-bg, #f9f8f3);
+  color-scheme: light;
   min-height: 100svh;
   display: grid;
   grid-template-columns: 1fr 1fr;
+}
+
+.page[data-theme="dark"] {
+  --auth-bg: #10251e;
+  --auth-text: #f4f1e7;
+  --auth-muted: #b1bfb1;
+  --auth-accent: #c6d8a4;
+  --auth-border: #4f6557;
+  --auth-soft-bg: #203c32;
+  --auth-input-bg: #172e25;
+  --auth-placeholder: #a3b2a5;
+  --auth-focus-ring: #c6d8a429;
+  --auth-button-bg: #c6d8a4;
+  --auth-button-text: #10251e;
+  --auth-button-hover: #d7e5bf;
+  --auth-spinner-track: #10251e40;
+  --auth-error-bg: #39251f;
+  --auth-error-border: #bb7c69;
+  --auth-error-text: #ffc3b0;
+  --auth-success-bg: #243d2e;
+  --auth-success-border: #607c4f;
+  --auth-success-text: #d1e3ba;
+  color-scheme: dark;
+}
+
+.accessHeader {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 18px;
+}
+
+.themeButton {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: var(--auth-accent, #56664b);
+  background: transparent;
+  border: 1px solid var(--auth-border, #d9dcd3);
+  border-radius: 50%;
+}
+
+.themeButton svg {
+  width: 19px;
+  height: 19px;
+}
+
+.themeButton:hover {
+  background: var(--auth-soft-bg, #f0f1e7);
+}
+
+.themeButton:focus-visible {
+  outline: 2px solid var(--auth-accent, #65794e);
+  outline-offset: 4px;
 }
 
 .skipLink {
@@ -163,7 +223,7 @@
   justify-content: flex-end;
   align-items: center;
   gap: 8px;
-  color: #657064;
+  color: var(--auth-muted, #657064);
   font-size: 9px;
   letter-spacing: 1.7px;
 }
@@ -171,7 +231,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #6c8054;
+  background: var(--auth-accent, #6c8054);
 }
 .formArea {
   width: 100%;
@@ -185,18 +245,18 @@
   justify-content: center;
   width: 48px;
   height: 48px;
-  border: 1px solid #dfe3d6;
+  border: 1px solid var(--auth-border, #dfe3d6);
   border-radius: 50%;
   margin-bottom: 29px;
-  color: #4e6541;
-  background: #f0f1e7;
+  color: var(--auth-accent, #4e6541);
+  background: var(--auth-soft-bg, #f0f1e7);
 }
 .welcomeIcon svg {
   width: 30px;
   height: 30px;
 }
 .formEyebrow {
-  color: #657353;
+  color: var(--auth-accent, #657353);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 1.9px;
@@ -212,7 +272,7 @@
 }
 .intro,
 .success > p:last-child {
-  color: #6b726b;
+  color: var(--auth-muted, #6b726b);
   font-size: 14px;
   line-height: 1.75;
   margin: 0 0 34px;
@@ -231,30 +291,30 @@
   width: 100%;
   min-width: 0;
   height: 53px;
-  border: 1px solid #d9dcd3;
+  border: 1px solid var(--auth-border, #d9dcd3);
   border-radius: 6px;
-  background: #fffefa;
+  background: var(--auth-input-bg, #fffefa);
   padding: 0 16px;
-  color: #263b32;
+  color: var(--auth-text, #263b32);
   font-size: 16px;
   transition:
     border-color 0.15s,
     box-shadow 0.15s;
 }
 .field input::placeholder {
-  color: #878d84;
+  color: var(--auth-placeholder, #878d84);
   font-size: 13px;
 }
 .field input:hover {
-  border-color: #9ca992;
+  border-color: var(--auth-accent, #9ca992);
 }
 .field input:focus {
   outline: none;
-  border-color: #65794e;
-  box-shadow: 0 0 0 3px #65794e1f;
+  border-color: var(--auth-accent, #65794e);
+  box-shadow: 0 0 0 3px var(--auth-focus-ring, #65794e1f);
 }
 .field input[aria-invalid="true"] {
-  border-color: #a04534;
+  border-color: var(--auth-error-border, #a04534);
 }
 .field input:disabled {
   opacity: 0.65;
@@ -276,7 +336,7 @@
   height: 45px;
   border: 0;
   background: transparent;
-  color: #737d6f;
+  color: var(--auth-muted, #737d6f);
   border-radius: 4px;
 }
 .revealButton svg {
@@ -284,22 +344,22 @@
   height: 20px;
 }
 .revealButton:hover {
-  color: #203c32;
-  background: #f0f1e7;
+  color: var(--auth-text, #203c32);
+  background: var(--auth-soft-bg, #f0f1e7);
 }
 .fieldError {
   font-size: 12px;
-  color: #933d2f;
+  color: var(--auth-error-text, #933d2f);
   line-height: 1.5;
   margin: 8px 0 0;
 }
 .error {
-  border: 1px solid #e4c5bb;
+  border: 1px solid var(--auth-error-border, #e4c5bb);
   border-radius: 6px;
   padding: 12px 14px;
   margin-bottom: 20px;
-  background: #fbefea;
-  color: #883a2c;
+  background: var(--auth-error-bg, #fbefea);
+  color: var(--auth-error-text, #883a2c);
   font-size: 13px;
   line-height: 1.6;
 }
@@ -310,10 +370,10 @@
   gap: 10px;
   width: 100%;
   min-height: 53px;
-  border: 1px solid #294536;
+  border: 1px solid var(--auth-button-bg, #294536);
   border-radius: 6px;
-  background: #294536;
-  color: #fffefa;
+  background: var(--auth-button-bg, #294536);
+  color: var(--auth-button-text, #fffefa);
   font-size: 13px;
   font-weight: 600;
   padding: 13px 18px;
@@ -333,7 +393,7 @@
   margin-right: auto;
 }
 .submit:hover:not(:disabled) {
-  background: #385b45;
+  background: var(--auth-button-hover, #385b45);
 }
 .submit:active:not(:disabled) {
   transform: translateY(1px);
@@ -344,18 +404,18 @@
 .submit:focus-visible,
 .revealButton:focus-visible,
 .help summary:focus-visible {
-  outline: 2px solid #65794e;
+  outline: 2px solid var(--auth-accent, #65794e);
   outline-offset: 4px;
 }
 .sessionNote {
-  color: #788071;
+  color: var(--auth-muted, #788071);
   font-size: 11px;
   line-height: 1.6;
   text-align: center;
   margin: 16px 0 0;
 }
 .help {
-  border-top: 1px solid #dfe2d8;
+  border-top: 1px solid var(--auth-border, #dfe2d8);
   margin-top: 34px;
   padding-top: 22px;
 }
@@ -364,7 +424,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  color: #56664b;
+  color: var(--auth-accent, #56664b);
   font-size: 12px;
   cursor: pointer;
   list-style: none;
@@ -380,7 +440,7 @@
   transform: rotate(45deg);
 }
 .help p {
-  color: #6b726b;
+  color: var(--auth-muted, #6b726b);
   font-size: 12px;
   line-height: 1.8;
   margin-bottom: 0;
@@ -390,19 +450,19 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
-  color: #7a8074;
+  color: var(--auth-muted, #7a8074);
   font-size: 10px;
   line-height: 1.5;
 }
 .footer > span:first-child {
   font-weight: 600;
-  color: #526248;
+  color: var(--auth-accent, #526248);
 }
 .spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid #ffffff50;
-  border-top-color: white;
+  border: 2px solid var(--auth-spinner-track, #ffffff50);
+  border-top-color: var(--auth-button-text, white);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }

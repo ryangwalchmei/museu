@@ -9,7 +9,7 @@
   justify-content: center;
   min-height: 44px;
   margin-top: 16px;
-  color: #56664b;
+  color: var(--auth-accent, #56664b);
   font-size: 12px;
   line-height: 1.6;
   text-align: center;
@@ -17,11 +17,11 @@
 }
 
 .secondaryLink:hover {
-  color: #203c32;
+  color: var(--auth-text, #203c32);
 }
 
 .secondaryLink:focus-visible {
-  outline: 2px solid #65794e;
+  outline: 2px solid var(--auth-accent, #65794e);
   outline-offset: 4px;
   border-radius: 4px;
 }
@@ -31,10 +31,10 @@
   align-items: center;
   gap: 12px;
   padding: 16px;
-  border: 1px solid #d8e0cb;
+  border: 1px solid var(--auth-success-border, #d8e0cb);
   border-radius: 6px;
-  background: #edf1e5;
-  color: #3f5835;
+  background: var(--auth-success-bg, #edf1e5);
+  color: var(--auth-success-text, #3f5835);
   font-size: 13px;
   line-height: 1.6;
 }
