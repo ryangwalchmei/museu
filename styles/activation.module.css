@@ -1,0 +1,46 @@
+.primaryLink {
+  text-decoration: none;
+  text-align: center;
+}
+
+.secondaryLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: 16px;
+  color: #56664b;
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: center;
+  text-underline-offset: 4px;
+}
+
+.secondaryLink:hover {
+  color: #203c32;
+}
+
+.secondaryLink:focus-visible {
+  outline: 2px solid #65794e;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.confirmation {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #d8e0cb;
+  border-radius: 6px;
+  background: #edf1e5;
+  color: #3f5835;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.confirmation svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
