@@ -28,7 +28,7 @@ function stopLoader(): void {
 }
 
 function checkPostgres(): void {
-  exec("docker exec tf-dev pg_isready --host localhost", (error, stdout) => {
+  exec("docker exec museu-pg pg_isready --host localhost", (error, stdout) => {
     if (error || !stdout.includes("accepting connections")) {
       setTimeout(checkPostgres, 1000);
       return;
