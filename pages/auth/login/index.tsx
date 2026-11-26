@@ -1,25 +1,7 @@
 import Head from "next/head";
-import Image from "next/image";
+import AuthLayout from "components/auth-layout";
 import { useRef, useState, type FormEvent } from "react";
 import styles from "styles/login.module.css";
-
-function LeafMark() {
-  return (
-    <svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
-      <path
-        d="M10 29C3 13 18 7 31 7c1 15-5 27-21 22Z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-      />
-      <path
-        d="M8 33 26 13M14 26l-1-10m6 5 9-1"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
 
 function EyeIcon({ visible }: { visible: boolean }) {
   return (
@@ -115,203 +97,142 @@ export default function Login() {
         <meta name="theme-color" content="#203c32" />
       </Head>
 
-      <div className={styles.page}>
-        <a className={styles.skipLink} href="#acesso">
-          Ir para o formulário
-        </a>
-
-        <aside className={styles.story} aria-label="Museu Flora">
-          <div className={styles.brand}>
-            <span className={styles.brandIcon}>
-              <LeafMark />
-            </span>
-            <span>
-              Museu <strong>Flora</strong>
-              <small>MEMÓRIA QUE FLORESCE</small>
-            </span>
+      <AuthLayout>
+        {authenticated ? (
+          <div className={styles.success} role="status" aria-live="polite">
+            <p className={styles.formEyebrow}>BEM-VINDO AO MUSEU FLORA</p>
+            <h1>Que bom ter você aqui.</h1>
+            <p>Login realizado com sucesso. Sua sessão está ativa.</p>
           </div>
-
-          <div className={styles.storyContent}>
-            <p className={styles.eyebrow}>
-              <span /> NATUREZA, CULTURA E MEMÓRIA
+        ) : (
+          <>
+            <p className={styles.formEyebrow}>BEM-VINDO DE VOLTA</p>
+            <h1>Entre e faça parte.</h1>
+            <p className={styles.intro}>
+              Acesse sua conta para continuar sua jornada
+              <br className={styles.desktopBreak} /> com o Museu Flora.
             </p>
-            <h2>
-              Cultivar o presente.
-              <br />
-              <em>Preservar a história.</em>
-            </h2>
-            <p className={styles.storyDescription}>
-              Um encontro entre o que somos e o que queremos deixar para o
-              mundo.
-            </p>
-            <div className={styles.botanical} aria-hidden="true">
-              <span className={styles.orbit} />
-              <Image src="/botanical.svg" alt="" width="480" height="440" />
-              <span className={styles.specimenLabel}>
-                FLORA
-                <br />
-                <span>Um acervo vivo de histórias.</span>
-              </span>
-            </div>
-          </div>
 
-          <div className={styles.storyFooter}>
-            <span>Raízes no passado. Olhar para o futuro.</span>
-            <span aria-hidden="true">✳</span>
-          </div>
-        </aside>
-
-        <main className={styles.access} id="acesso">
-          <div className={styles.topNote}>
-            <span className={styles.statusDot} /> ESPAÇO DO MUSEU
-          </div>
-
-          <div className={styles.formArea}>
-            <span className={styles.welcomeIcon}>
-              <LeafMark />
-            </span>
-            {authenticated ? (
-              <div className={styles.success} role="status" aria-live="polite">
-                <p className={styles.formEyebrow}>BEM-VINDO AO MUSEU FLORA</p>
-                <h1>Que bom ter você aqui.</h1>
-                <p>Login realizado com sucesso. Sua sessão está ativa.</p>
+            <form onSubmit={handleSubmit} noValidate aria-busy={pending}>
+              <div className={styles.field}>
+                <label htmlFor="email">E-mail</label>
+                <input
+                  ref={emailRef}
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="username"
+                  inputMode="email"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  placeholder="seu@email.com"
+                  required
+                  disabled={pending}
+                  aria-invalid={Boolean(fieldErrors.email)}
+                  aria-describedby={
+                    fieldErrors.email ? "email-error" : undefined
+                  }
+                  onChange={() => {
+                    setFieldErrors((current) => ({
+                      ...current,
+                      email: "",
+                    }));
+                    setError("");
+                  }}
+                />
+                {fieldErrors.email ? (
+                  <p className={styles.fieldError} id="email-error">
+                    {fieldErrors.email}
+                  </p>
+                ) : null}
               </div>
-            ) : (
-              <>
-                <p className={styles.formEyebrow}>BEM-VINDO DE VOLTA</p>
-                <h1>Entre e faça parte.</h1>
-                <p className={styles.intro}>
-                  Acesse sua conta para continuar sua jornada
-                  <br className={styles.desktopBreak} /> com o Museu Flora.
-                </p>
 
-                <form onSubmit={handleSubmit} noValidate aria-busy={pending}>
-                  <div className={styles.field}>
-                    <label htmlFor="email">E-mail</label>
-                    <input
-                      ref={emailRef}
-                      id="email"
-                      name="email"
-                      type="email"
-                      autoComplete="username"
-                      inputMode="email"
-                      autoCapitalize="none"
-                      spellCheck={false}
-                      placeholder="seu@email.com"
-                      required
-                      disabled={pending}
-                      aria-invalid={Boolean(fieldErrors.email)}
-                      aria-describedby={
-                        fieldErrors.email ? "email-error" : undefined
-                      }
-                      onChange={() => {
-                        setFieldErrors((current) => ({
-                          ...current,
-                          email: "",
-                        }));
-                        setError("");
-                      }}
-                    />
-                    {fieldErrors.email ? (
-                      <p className={styles.fieldError} id="email-error">
-                        {fieldErrors.email}
-                      </p>
-                    ) : null}
-                  </div>
-
-                  <div className={styles.field}>
-                    <label htmlFor="password">Senha</label>
-                    <div className={styles.passwordInput}>
-                      <input
-                        ref={passwordRef}
-                        id="password"
-                        name="password"
-                        type={showPassword ? "text" : "password"}
-                        autoComplete="current-password"
-                        placeholder="Digite sua senha"
-                        required
-                        disabled={pending}
-                        aria-invalid={Boolean(fieldErrors.password)}
-                        aria-describedby={
-                          fieldErrors.password ? "password-error" : undefined
-                        }
-                        onChange={() => {
-                          setFieldErrors((current) => ({
-                            ...current,
-                            password: "",
-                          }));
-                          setError("");
-                        }}
-                      />
-                      <button
-                        type="button"
-                        className={styles.revealButton}
-                        aria-label={
-                          showPassword ? "Ocultar senha" : "Mostrar senha"
-                        }
-                        aria-pressed={showPassword}
-                        aria-controls="password"
-                        onClick={() => setShowPassword((current) => !current)}
-                      >
-                        <EyeIcon visible={showPassword} />
-                      </button>
-                    </div>
-                    {fieldErrors.password ? (
-                      <p className={styles.fieldError} id="password-error">
-                        {fieldErrors.password}
-                      </p>
-                    ) : null}
-                  </div>
-
-                  {error ? (
-                    <div className={styles.error} role="alert">
-                      {error}
-                    </div>
-                  ) : null}
-
-                  <button
-                    className={styles.submit}
-                    type="submit"
+              <div className={styles.field}>
+                <label htmlFor="password">Senha</label>
+                <div className={styles.passwordInput}>
+                  <input
+                    ref={passwordRef}
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    placeholder="Digite sua senha"
+                    required
                     disabled={pending}
+                    aria-invalid={Boolean(fieldErrors.password)}
+                    aria-describedby={
+                      fieldErrors.password ? "password-error" : undefined
+                    }
+                    onChange={() => {
+                      setFieldErrors((current) => ({
+                        ...current,
+                        password: "",
+                      }));
+                      setError("");
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className={styles.revealButton}
+                    aria-label={
+                      showPassword ? "Ocultar senha" : "Mostrar senha"
+                    }
+                    aria-pressed={showPassword}
+                    aria-controls="password"
+                    onClick={() => setShowPassword((current) => !current)}
                   >
-                    {pending ? (
-                      <>
-                        <span className={styles.spinner} aria-hidden="true" />{" "}
-                        Entrando...
-                      </>
-                    ) : (
-                      <>
-                        Entrar na minha conta <span aria-hidden="true">↗</span>
-                      </>
-                    )}
+                    <EyeIcon visible={showPassword} />
                   </button>
-                  <p className={styles.sessionNote} aria-live="polite">
-                    Seu acesso ao Museu Flora começa aqui.
+                </div>
+                {fieldErrors.password ? (
+                  <p className={styles.fieldError} id="password-error">
+                    {fieldErrors.password}
                   </p>
-                </form>
+                ) : null}
+              </div>
 
-                <details className={styles.help}>
-                  <summary>
-                    Precisa de ajuda para acessar?
-                    <span aria-hidden="true">+</span>
-                  </summary>
-                  <p>
-                    Use o e-mail cadastrado e sua senha. Se ainda não ativou a
-                    conta, confira o e-mail de ativação, inclusive na caixa de
-                    spam. Para recuperar seu acesso ou solicitar uma conta,
-                    entre em contato com a administração do museu.
-                  </p>
-                </details>
-              </>
-            )}
-          </div>
+              {error ? (
+                <div className={styles.error} role="alert">
+                  {error}
+                </div>
+              ) : null}
 
-          <footer className={styles.footer}>
-            <span>Museu Flora</span>
-            <span>Histórias que criam raízes.</span>
-          </footer>
-        </main>
-      </div>
+              <button
+                className={styles.submit}
+                type="submit"
+                disabled={pending}
+              >
+                {pending ? (
+                  <>
+                    <span className={styles.spinner} aria-hidden="true" />{" "}
+                    Entrando...
+                  </>
+                ) : (
+                  <>
+                    Entrar na minha conta <span aria-hidden="true">↗</span>
+                  </>
+                )}
+              </button>
+              <p className={styles.sessionNote} aria-live="polite">
+                Seu acesso ao Museu Flora começa aqui.
+              </p>
+            </form>
+
+            <details className={styles.help}>
+              <summary>
+                Precisa de ajuda para acessar?
+                <span aria-hidden="true">+</span>
+              </summary>
+              <p>
+                Use o e-mail cadastrado e sua senha. Se ainda não ativou a
+                conta, confira o e-mail de ativação, inclusive na caixa de spam.
+                Para recuperar seu acesso ou solicitar uma conta, entre em
+                contato com a administração do museu.
+              </p>
+            </details>
+          </>
+        )}
+      </AuthLayout>
     </>
   );
 }
