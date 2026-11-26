@@ -1,5 +1,5 @@
-import Login from "./auth/login";
+import Construction from "./em-construcao";
 
 export default function Home() {
-  return <Login />;
+  return <Construction />;
 }
