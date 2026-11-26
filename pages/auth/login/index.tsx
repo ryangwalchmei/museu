@@ -1,7 +1,11 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
+import requireGuest from "lib/require-guest";
 import AuthLayout from "components/auth-layout";
 import { useRef, useState, type FormEvent } from "react";
 import styles from "styles/login.module.css";
+
+export const getServerSideProps = requireGuest;
 
 function EyeIcon({ visible }: { visible: boolean }) {
   return (
@@ -20,6 +24,7 @@ function EyeIcon({ visible }: { visible: boolean }) {
 }
 
 export default function Login() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [pending, setPending] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
@@ -75,6 +80,7 @@ export default function Login() {
 
       if (passwordRef.current) passwordRef.current.value = "";
       setAuthenticated(true);
+      await router.replace("/");
     } catch {
       setError(
         "Não foi possível conectar. Verifique sua conexão e tente novamente.",

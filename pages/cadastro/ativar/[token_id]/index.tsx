@@ -1,10 +1,13 @@
 import AuthLayout from "components/auth-layout";
+import requireGuest from "lib/require-guest";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import styles from "styles/login.module.css";
 import activationStyles from "styles/activation.module.css";
+
+export const getServerSideProps = requireGuest;
 
 const tokenPattern =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -32,8 +35,7 @@ function ActivationContent({ token }: { token: string }) {
         `/api/v1/activations/${encodeURIComponent(token)}`,
         {
           method: "PATCH",
-          // The activation token identifies the account, independently of an existing login.
-          credentials: "omit",
+          credentials: "same-origin",
           signal: AbortSignal.timeout(15000),
         },
       );
