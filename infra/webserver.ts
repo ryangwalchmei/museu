@@ -7,7 +7,7 @@ function getOrigin() {
     return `https://${process.env.VERCEL_URL}`;
   }
 
-  return "https://trainerfit.com.br";
+  return "https://museu.gwalchmei.com.br";
 }
 
 const webserver = {

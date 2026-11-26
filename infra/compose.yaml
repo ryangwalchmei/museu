@@ -1,13 +1,13 @@
 services:
   database:
-    container_name: "tf-dev"
+    container_name: "museu"
     image: "postgres:16.6-alpine3.20"
     env_file:
       - ../.env.development
     ports:
       - "5432:5432"
   mailcatcher:
-    container_name: "tf-dev-mailcatcher"
+    container_name: "museu"
     image: "sj26/mailcatcher"
     ports:
       - "1025:1025"
