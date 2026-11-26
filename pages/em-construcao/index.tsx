@@ -6,10 +6,12 @@ import ConstructionEssence from "components/construction/construction-essence";
 import ConstructionFooter from "components/construction/construction-footer";
 import Head from "next/head";
 import { useTheme } from "components/theme-provider";
+import useCurrentUser from "hooks/use-current-user";
 import styles from "styles/construction.module.css";
 
 export default function Construction() {
   const { light, toggleTheme } = useTheme();
+  const account = useCurrentUser();
 
   return (
     <>
@@ -27,12 +29,16 @@ export default function Construction() {
           Ir para o conteúdo
         </a>
         <div className={styles.ambient} aria-hidden="true" />
-        <ConstructionHeader light={light} onToggleTheme={toggleTheme} />
+        <ConstructionHeader
+          light={light}
+          onToggleTheme={toggleTheme}
+          account={account}
+        />
 
         <main id="conteudo">
           <ConstructionHero />
 
-          <ConstructionQuickLinks />
+          <ConstructionQuickLinks account={account} />
 
           <ConstructionJourney />
 

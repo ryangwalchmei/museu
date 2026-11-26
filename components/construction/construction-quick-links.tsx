@@ -2,6 +2,7 @@ import AccountAccessCard from "./account-access-card";
 import QuickLinkCard from "./quick-link-card";
 import styles from "styles/construction.module.css";
 import { LeafIcon } from "./icons";
+import type { CurrentUser } from "hooks/use-current-user";
 
 const quickLinks = [
   {
@@ -34,7 +35,11 @@ const quickLinks = [
   },
 ];
 
-export default function ConstructionQuickLinks() {
+export default function ConstructionQuickLinks({
+  account,
+}: {
+  account: CurrentUser;
+}) {
   return (
     <section className={styles.quickSection} aria-labelledby="quick-title">
       <div className={styles.sectionHeading}>
@@ -42,7 +47,7 @@ export default function ConstructionQuickLinks() {
         <h2 id="quick-title">Seu próximo caminho.</h2>
       </div>
       <div className={styles.quickLinks}>
-        <AccountAccessCard />
+        <AccountAccessCard account={account} />
         {quickLinks.map((link) => (
           <QuickLinkCard key={link.href} {...link} />
         ))}

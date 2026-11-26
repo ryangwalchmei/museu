@@ -6,12 +6,17 @@ type SessionState =
   | { status: "authenticated"; username: string }
   | { status: "error" };
 
+export type CurrentUser = ReturnType<typeof useCurrentUser>;
+
 export default function useCurrentUser() {
   const [session, setSession] = useState<SessionState>({ status: "loading" });
   const requestRef = useRef<Promise<SessionState> | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
+  const loggingOutRef = useRef(false);
 
   const refresh = useCallback(() => {
+    if (loggingOutRef.current)
+      return Promise.resolve<SessionState>({ status: "loading" });
     if (requestRef.current) return requestRef.current;
 
     const controller = new AbortController();
@@ -59,6 +64,29 @@ export default function useCurrentUser() {
     return request;
   }, []);
 
+  const logout = useCallback(async () => {
+    if (loggingOutRef.current) return;
+    loggingOutRef.current = true;
+
+    try {
+      // Finish any session renewal before expiring it, and pause revalidation.
+      await requestRef.current;
+      const response = await fetch("/api/v1/sessions", {
+        method: "DELETE",
+        credentials: "same-origin",
+        signal: AbortSignal.timeout(15000),
+      });
+
+      // An expired session is already signed out; the API clears its cookie.
+      if (!response.ok && response.status !== 401)
+        throw new Error("Não foi possível encerrar a sessão.");
+
+      setSession({ status: "anonymous" });
+    } finally {
+      loggingOutRef.current = false;
+    }
+  }, []);
+
   useEffect(() => {
     void refresh();
 
@@ -77,5 +105,5 @@ export default function useCurrentUser() {
     };
   }, [refresh]);
 
-  return { session, refresh };
+  return { session, refresh, logout };
 }

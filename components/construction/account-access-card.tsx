@@ -1,11 +1,15 @@
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
-import useCurrentUser from "hooks/use-current-user";
+import type { CurrentUser } from "hooks/use-current-user";
 import QuickLinkCard from "./quick-link-card";
 
-export default function AccountAccessCard() {
+export default function AccountAccessCard({
+  account,
+}: {
+  account: CurrentUser;
+}) {
   const router = useRouter();
-  const { session, refresh } = useCurrentUser();
+  const { session, refresh } = account;
   const [checkingAccess, setCheckingAccess] = useState(false);
   const navigatingRef = useRef(false);
   const authenticated = session.status === "authenticated";
