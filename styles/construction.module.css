@@ -1,0 +1,928 @@
+.page {
+  --background: #10251e;
+  --text: #f4f1e7;
+  --muted: #a8b9aa;
+  --accent: #c6d8a4;
+  --line: #b5cca329;
+  --surface: #ffffff04;
+  --glow: #96b8751a;
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow: clip;
+  background: var(--background);
+  color: var(--text);
+}
+
+.page[data-theme="light"] {
+  --background: #f5f4eb;
+  --text: #203c32;
+  --muted: #5d6c5c;
+  --accent: #526d3b;
+  --line: #45603d30;
+  --surface: #ffffff65;
+  --glow: #96b8751f;
+}
+
+.page a {
+  color: inherit;
+  text-decoration: none;
+}
+.page a:focus-visible,
+.page button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 6px;
+}
+.page button {
+  color: inherit;
+}
+.page h1,
+.page h2,
+.page h3,
+.page p {
+  margin: 0;
+}
+.page h1,
+.page h2,
+.page h3 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+}
+.header,
+.hero,
+.quickSection,
+.journey,
+.essence,
+.footer {
+  position: relative;
+  width: min(1200px, calc(100% - 96px));
+  margin-inline: auto;
+}
+.skipLink {
+  position: fixed;
+  left: 20px;
+  top: 16px;
+  z-index: 10;
+  transform: translateY(-180%);
+  padding: 14px 20px;
+  background: var(--background);
+  border: 1px solid var(--accent);
+}
+.skipLink:focus {
+  transform: translateY(0);
+}
+.ambient {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1000px;
+  background: radial-gradient(ellipse at 77% 24%, var(--glow), transparent 55%);
+  pointer-events: none;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 112px;
+  border-bottom: 1px solid var(--line);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 25px;
+  letter-spacing: -0.7px;
+}
+.brand > svg {
+  width: 42px;
+  height: 42px;
+  color: var(--accent);
+}
+.brand small {
+  display: block;
+  margin-top: 7px;
+  font-size: 8px;
+  color: var(--muted);
+  letter-spacing: 2px;
+}
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.buildBadge {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 13px;
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  color: var(--accent);
+  font-size: 11px;
+}
+.buildBadge i {
+  width: 5px;
+  height: 5px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+.themeButton {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+}
+.themeButton:hover {
+  border-color: var(--accent);
+}
+.themeButton svg {
+  width: 19px;
+  height: 19px;
+}
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  min-height: 670px;
+  padding-block: 70px;
+}
+.copy {
+  position: relative;
+  z-index: 1;
+}
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--accent);
+  font-size: 10px;
+  line-height: 1.6;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.eyebrow > span {
+  width: 27px;
+  height: 1px;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+.copy h1 {
+  margin-top: 29px;
+  font-size: clamp(54px, 5.7vw, 83px);
+  line-height: 1.04;
+  letter-spacing: -3.6px;
+}
+.copy h1 em {
+  color: var(--accent);
+  font-weight: 400;
+}
+.copy .intro {
+  max-width: 400px;
+  margin-top: 27px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.9;
+}
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 26px;
+  width: fit-content;
+  margin-top: 29px;
+  padding: 15px 20px;
+  border: 1px solid var(--accent);
+  border-radius: 30px;
+  font-size: 12px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.cta svg {
+  width: 20px;
+  height: 20px;
+}
+.cta:hover {
+  background: var(--accent);
+  color: var(--background);
+}
+.copy .heroNote {
+  margin-top: 17px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.6;
+}
+.orbScene {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 530px;
+  justify-self: center;
+}
+.orbGrid {
+  position: absolute;
+  inset: -8%;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.4;
+  mask-image: radial-gradient(circle, black, transparent 70%);
+  transform: rotate(-12deg);
+}
+.outerRing,
+.middleRing,
+.innerRing {
+  position: absolute;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+}
+.outerRing {
+  inset: 5%;
+  transform: rotate(-28deg);
+  animation: orbit 4.5s ease-out both;
+}
+.outerRing::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px dashed var(--line);
+  border-radius: 50%;
+}
+.middleRing {
+  inset: 14%;
+  border-color: var(--accent);
+  opacity: 0.45;
+  transform: rotate(28deg);
+}
+.innerRing {
+  inset: 22%;
+  box-shadow:
+    0 0 90px var(--glow),
+    inset 0 0 40px var(--glow);
+}
+.outerRing i,
+.middleRing i {
+  position: absolute;
+  top: 50%;
+  left: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 14px var(--accent);
+}
+.middleRing i {
+  top: 10%;
+  left: 78%;
+  width: 5px;
+  height: 5px;
+}
+.core {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  position: absolute;
+  inset: 28%;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: radial-gradient(
+    circle at 30% 25%,
+    var(--glow),
+    var(--background)
+  );
+  box-shadow:
+    0 20px 60px #00000015,
+    inset 0 1px 24px var(--glow);
+}
+.core svg {
+  width: 45px;
+  height: 45px;
+  color: var(--accent);
+}
+.core > span {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: clamp(44px, 5.5vw, 80px);
+  letter-spacing: -4px;
+  line-height: 1;
+}
+.core small {
+  margin-top: 15px;
+  font-size: 7px;
+  color: var(--accent);
+  letter-spacing: 2px;
+  text-align: center;
+}
+.orbTop,
+.orbBottom {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 8px;
+  letter-spacing: 2.7px;
+  color: var(--muted);
+}
+.orbTop {
+  top: 0;
+}
+.orbBottom {
+  bottom: 0;
+}
+.starOne,
+.starTwo {
+  position: absolute;
+  color: var(--accent);
+}
+.starOne {
+  top: 19%;
+  right: 11%;
+  font-size: 34px;
+}
+.starTwo {
+  left: 10%;
+  bottom: 19%;
+  font-size: 24px;
+}
+.quickSection,
+.journey,
+.essence {
+  padding-block: 62px 70px;
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 25px;
+}
+.sectionHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+.sectionHeading h2 {
+  font-size: clamp(29px, 3vw, 42px);
+  line-height: 1.2;
+  letter-spacing: -1.1px;
+}
+.sectionHeading > div > .eyebrow {
+  margin-bottom: 12px;
+}
+.sectionHeading > span {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.quickLinks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.logoutButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 4px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.logoutButton:hover:not(:disabled) {
+  color: var(--accent);
+}
+.logoutButton svg {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+}
+.logoutButton:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+.accountFeedback {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 2;
+  max-width: min(100%, 360px);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.accountFeedback:not(:empty) {
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--background);
+}
+.quickCard > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.quickCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 24px 20px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+  transition:
+    border-color 0.2s,
+    transform 0.2s;
+}
+.quickCard:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+}
+.quickCard small {
+  color: var(--muted);
+  font-size: 8px;
+  letter-spacing: 1.4px;
+}
+.quickCard h3 {
+  font-size: 20px;
+  margin-top: 7px;
+}
+.quickCard p {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+  margin-top: 8px;
+}
+.cardIcon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--accent);
+}
+.cardIcon svg {
+  width: 22px;
+  height: 22px;
+}
+.quickCard > svg {
+  width: 17px;
+  height: 17px;
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--accent);
+}
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  position: relative;
+  margin-top: 45px;
+  margin-bottom: 28px;
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  top: 22px;
+  left: 12.5%;
+  right: 12.5%;
+  height: 1px;
+  background: var(--line);
+}
+.step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 0 10px 15px;
+  border: 0;
+  background: transparent;
+  font-size: 13px;
+}
+.marker {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--background);
+  color: var(--muted);
+  font-size: 11px;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s;
+}
+.step[data-selected="true"] .marker {
+  background: var(--accent);
+  color: var(--background);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 6px var(--glow);
+}
+.step[data-current="true"] > small {
+  color: var(--accent);
+}
+.step small {
+  font-size: 10px;
+  color: var(--muted);
+}
+.step:hover .marker {
+  border-color: var(--accent);
+}
+.timelineDetail {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  min-height: 180px;
+  padding: 30px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.detailNumber {
+  font-family: Georgia, serif;
+  color: var(--accent);
+  opacity: 0.45;
+  font-size: 55px;
+}
+.timelineDetail > div {
+  flex: 1;
+}
+.timelineDetail h3 {
+  font-size: 26px;
+  margin-top: 9px;
+  letter-spacing: -0.5px;
+}
+.timelineDetail h3 + p {
+  max-width: 660px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.detailStatus {
+  align-self: flex-start;
+  white-space: nowrap;
+  border: 1px solid var(--line);
+  padding: 7px 10px;
+  border-radius: 20px;
+  font-size: 9px;
+  color: var(--accent);
+}
+.sectionIntro {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 40px;
+}
+.pillar {
+  position: relative;
+  overflow: hidden;
+  padding: 27px;
+  min-height: 255px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: linear-gradient(135deg, var(--surface), transparent);
+}
+.pillar:nth-child(2) {
+  transform: translateY(-9px);
+}
+.pillarTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 33px;
+  color: var(--accent);
+}
+.pillarTop > span:first-child {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+}
+.pillarTop svg {
+  width: 36px;
+  height: 36px;
+}
+.symbol {
+  font-size: 36px;
+  line-height: 1;
+}
+.pillar h3 {
+  font-size: 28px;
+  letter-spacing: -0.7px;
+}
+.pillar p {
+  margin-top: 15px;
+  max-width: 280px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.pillarLine {
+  position: absolute;
+  right: -20px;
+  bottom: 15px;
+  width: 75px;
+  height: 1px;
+  transform: rotate(-45deg);
+  background: var(--line);
+}
+.footer {
+  min-height: 110px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.7;
+}
+.footerBrand {
+  font-size: 18px;
+  color: var(--text) !important;
+  letter-spacing: -0.5px;
+}
+.footer > span {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 8px;
+  letter-spacing: 1.6px;
+}
+.footer > span > span {
+  color: var(--accent);
+  font-size: 24px;
+}
+@keyframes orbit {
+  from {
+    transform: rotate(-70deg);
+    opacity: 0.2;
+  }
+  to {
+    transform: rotate(-28deg);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 1100px) {
+  .header,
+  .hero,
+  .quickSection,
+  .journey,
+  .essence,
+  .footer {
+    width: calc(100% - 64px);
+  }
+  .quickCard {
+    padding: 20px 16px;
+    gap: 10px;
+  }
+  .quickCard > svg {
+    display: none;
+  }
+  .cardIcon {
+    width: 34px;
+    height: 34px;
+  }
+  .quickCard h3 {
+    font-size: 19px;
+  }
+  .pillar {
+    padding: 22px;
+  }
+  .pillar h3 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 800px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding-top: 55px;
+    padding-bottom: 48px;
+    gap: 30px;
+  }
+  .copy h1 {
+    font-size: clamp(52px, 9vw, 76px);
+  }
+  .copy .intro {
+    max-width: 460px;
+  }
+  .orbScene {
+    max-width: 420px;
+  }
+  .core > span {
+    font-size: 66px;
+  }
+  .quickLinks,
+  .pillars {
+    grid-template-columns: 1fr;
+  }
+  .quickCard {
+    padding: 24px;
+    gap: 20px;
+  }
+  .quickCard > svg {
+    display: block;
+  }
+  .quickCard h3 {
+    font-size: 23px;
+  }
+  .sectionHeading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .timelineDetail {
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .timelineDetail > div {
+    flex-basis: calc(100% - 90px);
+  }
+  .detailStatus {
+    margin-left: 76px;
+  }
+  .pillar {
+    min-height: 210px;
+    padding: 27px;
+  }
+  .pillar:nth-child(2) {
+    transform: none;
+  }
+  .pillarTop {
+    margin-bottom: 22px;
+  }
+  .pillar p {
+    max-width: 100%;
+  }
+  .footer {
+    flex-wrap: wrap;
+    padding-block: 25px;
+    gap: 16px;
+  }
+  .footer > p {
+    order: 3;
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .logoutButton span {
+    display: none;
+  }
+  .header:has(.logoutButton) .buildBadge {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .header,
+  .hero,
+  .quickSection,
+  .journey,
+  .essence,
+  .footer {
+    width: calc(100% - 40px);
+  }
+  .header {
+    min-height: 94px;
+    gap: 10px;
+  }
+  .brand {
+    font-size: 21px;
+    gap: 8px;
+  }
+  .brand > svg {
+    width: 30px;
+    height: 30px;
+  }
+  .brand small {
+    font-size: 6px;
+    letter-spacing: 1.3px;
+  }
+  .headerActions {
+    gap: 8px;
+  }
+  .buildBadge {
+    font-size: 9px;
+    padding: 8px;
+    gap: 5px;
+  }
+  .themeButton {
+    width: 36px;
+    height: 36px;
+  }
+  .eyebrow {
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    gap: 8px;
+  }
+  .copy h1 {
+    font-size: clamp(47px, 12vw, 61px);
+    letter-spacing: -2.6px;
+  }
+  .copy .intro {
+    font-size: 13px;
+  }
+  .orbScene {
+    margin-top: 15px;
+  }
+  .core svg {
+    width: 32px;
+    height: 32px;
+  }
+  .core > span {
+    font-size: 52px;
+  }
+  .core small {
+    font-size: 5px;
+    letter-spacing: 1px;
+    margin-top: 10px;
+  }
+  .orbTop,
+  .orbBottom {
+    font-size: 7px;
+    letter-spacing: 1.5px;
+  }
+  .quickSection,
+  .journey,
+  .essence {
+    padding-block: 42px 48px;
+  }
+  .step {
+    padding-inline: 2px;
+    font-size: 11px;
+  }
+  .step small {
+    font-size: 8px;
+    line-height: 1.5;
+  }
+  .timelineDetail {
+    padding: 22px;
+    gap: 15px;
+  }
+  .detailNumber {
+    font-size: 40px;
+  }
+  .timelineDetail > div {
+    flex-basis: calc(100% - 65px);
+  }
+  .timelineDetail h3 {
+    font-size: 23px;
+  }
+  .timelineDetail h3 + p {
+    font-size: 12px;
+  }
+  .detailStatus {
+    margin-left: 55px;
+  }
+}
+
+@media (max-width: 359px) {
+  .buildBadge {
+    border: 0;
+    padding: 0;
+    max-width: 72px;
+    line-height: 1.5;
+  }
+  .brand {
+    font-size: 19px;
+  }
+  .brand small {
+    letter-spacing: 1px;
+  }
+  .core > span {
+    font-size: 43px;
+  }
+  .core svg {
+    width: 27px;
+    height: 27px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page *,
+  .page *::before,
+  .page *::after {
+    animation: none;
+    transition: none;
+    scroll-behavior: auto;
+  }
+}

@@ -1,4 +1,5 @@
 import * as cookie from "cookie";
+import type { ServerResponse } from "node:http";
 import {
   ForbiddenError,
   InternalServerError,
@@ -63,7 +64,7 @@ function setSessionCookie(sessionToken: string, response: NextApiResponse) {
   );
 }
 
-function clearSessionCookie(response: NextApiResponse) {
+function clearSessionCookie(response: ServerResponse) {
   const setCookie = cookie.stringifySetCookie({
     name: "session_id",
     value: "invalid",
