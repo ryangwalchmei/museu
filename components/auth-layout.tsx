@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Head from "next/head";
+import Link from "next/link";
 import { useTheme } from "components/theme-provider";
 import ThemeToggle from "components/theme-toggle";
 import type { ReactNode } from "react";
@@ -77,9 +78,22 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 
       <main className={styles.access} id="acesso">
         <div className={styles.accessHeader}>
-          <div className={styles.topNote}>
-            <span className={styles.statusDot} /> ESPAÇO DO MUSEU
-          </div>
+          <Link className={styles.backLink} href="/">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              aria-hidden="true"
+            >
+              <path
+                d="M19 12H5m6-6-6 6 6 6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            Voltar ao início
+          </Link>
           <ThemeToggle
             light={light}
             onToggle={toggleTheme}

@@ -37,6 +37,35 @@
   gap: 18px;
 }
 
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-right: auto;
+  color: var(--auth-accent, #56664b);
+  font-size: 12px;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.backLink svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.backLink:focus-visible {
+  outline: 2px solid var(--auth-accent, #65794e);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
 .themeButton {
   display: grid;
   place-items: center;
@@ -217,21 +246,6 @@
   min-width: 0;
   flex-direction: column;
   padding: 49px clamp(28px, 6vw, 110px) 34px;
-}
-.topNote {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
-  color: var(--auth-muted, #657064);
-  font-size: 9px;
-  letter-spacing: 1.7px;
-}
-.statusDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--auth-accent, #6c8054);
 }
 .formArea {
   width: 100%;
@@ -522,9 +536,6 @@
   .access {
     padding: 25px 24px 22px;
     min-height: calc(100svh - 93px);
-  }
-  .topNote {
-    font-size: 8px;
   }
   .formArea {
     padding: 35px 0 42px;
