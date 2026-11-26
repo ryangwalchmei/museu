@@ -1,11 +1,11 @@
 import database from "infra/database";
 import email from "infra/email";
-import webserver from "infra/webserver";
-import { ActivationToken } from "./types";
 import { ForbiddenError, NotFoundError } from "infra/errors";
-import user from "models/user";
+import webserver from "infra/webserver";
 import authorization from "models/authorization";
+import user from "models/user";
 import { User } from "models/user/types";
+import { ActivationToken } from "./types";
 
 const EXPIRATION_IN_MILLISECONDS = 60 * 15 * 1000;
 
@@ -72,12 +72,12 @@ async function sendEmailToUser(
     from: "Gwalchmei <contato@gwalchmei.com.br>",
     to: user.email,
     subject: "Ative seu cadastro!",
-    text: `${user.username}, clique no link abaixo para ativar seu cadastro no Trainerfit.
+    text: `${user.username}, clique no link abaixo para ativar seu cadastro.
 
 ${webserver.origin}/cadastro/ativar/${activationToken.id}
 
 Atenciosamente,
-Equipe Trainerfit`,
+Museu`,
   });
 }
 

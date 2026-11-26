@@ -1,5 +1,5 @@
 {
-  "name": "trainerfit2",
+  "name": "museu",
   "type": "module",
   "scripts": {
     "dev": "npm run services:up && npm run services:wait:database && next dev",
